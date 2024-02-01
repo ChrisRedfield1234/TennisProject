@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TennisProject</string>
+    <string name="entry_button">試合を始める</string>
+</resources>
