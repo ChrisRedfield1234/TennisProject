@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -47,6 +48,12 @@ public class ExportActivity extends AppCompatActivity {
     ArrayList<Server_DTO> serverList = new ArrayList<Server_DTO>();
     ArrayList<Side_DTO> sideList = new ArrayList<Side_DTO>();
 
+    String pointA ="";
+    String pointB="";
+
+    //String nameA = "";
+    //String nameB = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,11 +84,19 @@ public class ExportActivity extends AppCompatActivity {
         String sql1 ="select * from POINT_TBL";
         String sql2 ="select * from SERVER_TBL";
         String sql3 ="select * from SIDE_TBL";
+        String sql4 ="select COUNT(*) from GAME_TBL WHERE V_OPPONENTS_ID = 1";
+        String sql5 ="select COUNT(*) from GAME_TBL WHERE V_OPPONENTS_ID = 2";
+        //String sql6 ="select PLAYER_LAST_NAME || ' ' || PLAYER_FIRST_NAME from PLAYER_TBL where PLAYER_ID = 1";
+        //String sql7 ="select PLAYER_LAST_NAME || ' ' || PLAYER_FIRST_NAME from PLAYER_TBL where PLAYER_ID = 2";
 
         try {
             Cursor cursor1 = db.rawQuery(sql1, null);
             Cursor cursor2 = db.rawQuery(sql2, null);
             Cursor cursor3 = db.rawQuery(sql3, null);
+            Cursor cursor4 = db.rawQuery(sql4, null);
+            Cursor cursor5 = db.rawQuery(sql5, null);
+           // Cursor cursor6 = db.rawQuery(sql6, null);
+            //Cursor cursor7 = db.rawQuery(sql7, null);
 
             while (cursor1.moveToNext()) {
                 Point_DTO dto = new Point_DTO();
@@ -113,6 +128,59 @@ public class ExportActivity extends AppCompatActivity {
                 dto.setToss_Winner(cursor3.getString(2));
                 sideList.add(dto);
             }
+
+            while (cursor4.moveToNext()) {
+                pointA = cursor4.getString(0);
+            }
+            while (cursor5.moveToNext()) {
+                pointB = cursor5.getString(0);
+            }
+
+
+            TextView point1 = findViewById(R.id.GameScore1);
+
+            if(pointA.equals("5")&&!(pointB.equals("6"))) {
+                point1.setText("6");
+            } else if(pointA.equals("6")){
+                point1.setText("7");
+            } else {
+                point1.setText(pointA);
+            }
+            point1 = findViewById(R.id.GameScore1);
+
+
+
+            TextView point2 = findViewById(R.id.GameScore2);
+
+            if(pointB.equals("5")&&!(pointA.equals("6"))) {
+                point2.setText("6");
+            } else if(pointB.equals("6")) {
+                point2.setText("7");
+            }else {
+                point2.setText(pointB);
+            }
+
+            point2 = findViewById(R.id.GameScore2);
+
+
+
+           /* while (cursor6.moveToNext()) {
+                nameA = cursor6.getString(0);
+            }
+
+            TextView name1 = findViewById(R.id.Name1);
+            name1.setText(nameA);
+            name1 = findViewById(R.id.Name1);
+
+            while (cursor7.moveToNext()) {
+                nameB = cursor7.getString(0);
+            }
+
+            TextView name2 = findViewById(R.id.Name2);
+            name2.setText(nameB);
+            name2 = findViewById(R.id.Name2);*/
+
+
 
         } finally {
             db.close();

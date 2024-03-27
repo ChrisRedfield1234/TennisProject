@@ -1,5 +1,10 @@
 package com.example.tennisproject;
 
+import static com.example.tennisproject.MainActivity.player_First_Name1;
+import static com.example.tennisproject.MainActivity.player_First_Name2;
+import static com.example.tennisproject.MainActivity.player_Last_Name1;
+import static com.example.tennisproject.MainActivity.player_Last_Name2;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.SavedStateHandle;
 
@@ -12,39 +17,43 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class tossActivity extends AppCompatActivity {
 
     int toss1 = 0;
     int toss2 = 0;
-
     int server1 = 0;
     int server2 = 0;
-
     int receiver1 = 0;
     int receiver2 = 0;
-
     int left1 = 0;
     int left2 = 0;
-
     int right1 = 0;
     int right2 = 0;
-
     int assignment1 = 0;
     int assignment2 = 0;
-
     private DatabaseHelper helper;
+    MATCH_DTO m_dto = new MATCH_DTO();
+    ArrayList<PLAYER_DTO> playerList = new ArrayList<PLAYER_DTO>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.toss);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        TextView player1 = (TextView)findViewById(R.id.player_name1);
+        TextView player2 = (TextView)findViewById(R.id.player_name2);
+
+        player1.setText(player_Last_Name1 + player_First_Name1);
+        player2.setText(player_Last_Name2 + player_First_Name2);
 
         helper = new DatabaseHelper(this);
 
@@ -179,8 +188,6 @@ public class tossActivity extends AppCompatActivity {
         });
 
 
-
-
         checkBox_left1.setOnClickListener(view -> {
             CheckBox c = (CheckBox) view;
             if (c.isChecked()) {
@@ -304,6 +311,7 @@ public class tossActivity extends AppCompatActivity {
 
         });
     }
+
 
     public void tossUpdate() {
 
