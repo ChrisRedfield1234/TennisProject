@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 public class CountActivity extends AppCompatActivity {
@@ -240,10 +242,15 @@ public class CountActivity extends AppCompatActivity {
             if(count1 >= 7 && count1 - count2 == 1 || count1 >= 6 && count1 - count2 >= 2){
                 count1++;
                 point1.setText(String.valueOf(count1));
+                //3/26追加
+                pointInsert(true);
+                checkGamecount1();
                 startActivity(new Intent(this, ExportActivity.class));
             }else{
                 count1++;
                 point1.setText(String.valueOf(count1));
+                //3/26追加
+                pointInsert(true);
             }
 
             if((count1 + count2) % 6 == 0) {
@@ -308,10 +315,15 @@ public class CountActivity extends AppCompatActivity {
             if (count2 >= 7 && count2- count1 == 1 || count2 >= 6 && count2- count1 >= 2) {
                 count2++;
                 point2.setText(String.valueOf(count2));
+                //3/26追加
+                pointInsert(false);
+                checkGamecount2();
                 startActivity(new Intent(this, ExportActivity.class));
             }else{
                 count2++;
                 point2.setText(String.valueOf(count2));
+                //3/26追加
+                pointInsert(false);
             }
 
             if((count2 + count1) % 6 == 0) {
@@ -344,13 +356,15 @@ public class CountActivity extends AppCompatActivity {
         if(gCount1 == 5 && gCount2 < 5){
             gCount1++;
             sCount1++;
-            setInsert1();
+            gameInsert(true);
+            setInsert(true);
             serverActivity();
             checkSetcount1();
         }else if(gCount1 == 6 && gCount2 == 5){
             gCount1++;
             sCount1++;
-            setInsert1();
+            gameInsert(true);
+            setInsert(true);
             serverActivity();
             checkSetcount1();
         }else if(gCount1 == 5 && gCount2 == 6) {
@@ -365,7 +379,7 @@ public class CountActivity extends AppCompatActivity {
             gCount1++;
             sCount1++;
             gPoint1.setText(Integer.toString(gCount1));
-            serverActivity();
+            gameInsert(true);
             checkSetcount1();
         }else if(gCount2 <= 5){
             gCount1++;
@@ -382,16 +396,19 @@ public class CountActivity extends AppCompatActivity {
 
     public void checkGamecount2(){
         TextView gPoint2 = (TextView)findViewById(R.id.gamecount2);
+
         if(gCount2 == 5 && gCount1 < 5){
             gCount2++;
             sCount2++;
-            setInsert2();
+            gameInsert(false);
+            setInsert(false);
             serverActivity();
             checkSetcount2();
         }else if(gCount2 == 6 && gCount1 == 5){
             gCount2++;
             sCount2++;
-            setInsert2();
+            gameInsert(false);
+            setInsert(false);
             serverActivity();
             checkSetcount2();
         }else if(gCount2 == 5 && gCount1 == 6) {
@@ -407,7 +424,7 @@ public class CountActivity extends AppCompatActivity {
             gCount2++;
             sCount2++;
             gPoint2.setText(Integer.toString(gCount2));
-            serverActivity();
+            gameInsert(false);
             checkSetcount2();
         }else if(gCount1 <= 5){
             gCount2++;
@@ -437,8 +454,6 @@ public class CountActivity extends AppCompatActivity {
             startActivity(new Intent(this, ExportActivity.class));
         }
     }
-
-    //2/20追加
 
     public void tiebreakActivity() {
         tie_Flag = true;
@@ -708,25 +723,18 @@ public class CountActivity extends AppCompatActivity {
             }
         }
         if(s_flag.equals(player_Id1)){
-            System.out.println("player_Id1");
             if(name1.getText().equals(player_Last_Name1 + player_First_Name1)){
-                System.out.println("A");
                 s_Mark1.setText("▶");
                 s_Mark2.setText("");
             }else if(name2.getText().equals(player_Last_Name1 + player_First_Name1)){
-                System.out.println("B");
                 s_Mark2.setText("▶");
                 s_Mark1.setText("");
             }
         }else if(s_flag.equals(player_Id2)){
-            //ここまでは来てる、以下の畏怖分修正する必要あり
-            System.out.println("player_Id2");
             if(name1.getText().equals(player_Last_Name2 + player_First_Name2)){
-                System.out.println("C");
                 s_Mark1.setText("▶");
                 s_Mark2.setText("");
             }else if(name2.getText().equals(player_Last_Name2 + player_First_Name2)){
-                System.out.println("D");
                 s_Mark2.setText("▶");
                 s_Mark1.setText("");
             }
@@ -736,6 +744,21 @@ public class CountActivity extends AppCompatActivity {
 
     public void pointInsert(boolean flag){
         helper = new DatabaseHelper(this);
+        String game_Id = "";
+        String point_Id = "";
+
+        if(gCount1 + gCount2 + 1 <= 9){
+            game_Id = String.valueOf("0" + (gCount1 + gCount2 + 1));
+        }else{
+            game_Id = String.valueOf(gCount1 + gCount2 + 1);
+        }
+
+        if(count1 + count2 <= 9){
+            point_Id = String.valueOf("0" + (count1 + count2));
+        }else{
+            point_Id = String.valueOf(count1 + count2);
+        }
+
         try {
             helper.createDatabase();
         } catch (
@@ -744,71 +767,45 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
+        String sql = "INSERT INTO POINT_TBL VALUES(1,1,?,?,?,?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+        //sql = "INSERT INTO POINT_TBL VALUES(1,0,"+ game_Id +","+ point_Id +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+
+        //Log.d("PointInsert", "game_Id: " + game_Id + ", point_Id: " + point_Id);
+        //Log.d("PointInsert", "Player ID: " + (flag ? player_Id1 : player_Id2) + ", f_flag1: " + f_flag1 + ", w_flag1: " + w_flag1 + ", a_flag1: " + a_flag1);
 
         if(flag){
             if(sideFlag){
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id1,f_flag1,w_flag1,a_flag1});
+                System.out.println("Insert実行");
             }else{
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag2 + ","+ a_flag1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id2,f_flag1,w_flag1,a_flag1});
+                System.out.println("Insert実行");
             }
         }else{
             if(sideFlag){
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id2,f_flag1,w_flag1,a_flag2});
+                System.out.println("Insert実行");
             }else{
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag2 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id1,f_flag1,w_flag1,a_flag2});
+                System.out.println("Insert実行");
             }
         }
 
-
-
         try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
-            }
 
         } finally {
             db.close();
         }
     }
-
-    public void pointInsert2(){
-        helper = new DatabaseHelper(this);
-        try {
-            helper.createDatabase();
-        } catch (
-                IOException e) {
-            throw new Error("Unable to create database");
-        }
-
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
-        if(sideFlag){
-            sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-            System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
-        }else{
-            sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag2 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-            System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
-        }
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-
-        } finally {
-            db.close();
-        }
-    }
-
 
     public void gameInsert(boolean flag) {
         helper = new DatabaseHelper(this);
+        String game_Id = "";
+        if(gCount1 + gCount2 <= 9){
+            game_Id = String.valueOf("0" + (gCount1 + gCount2));
+        }else{
+            game_Id = String.valueOf(gCount1 + gCount2);
+        }
         try {
             helper.createDatabase();
         } catch (
@@ -817,24 +814,58 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
+        String sql = "UPDATE GAME_TBL SET V_OPPONENTS_ID = ?, START_TIME = CURRENT_TIMESTAMP, END_TIME = CURRENT_TIMESTAMP WHERE GAME_ID = ?;";
+        //sql = "INSERT INTO GAME_TBL VALUES(1,0," + "0" + game_Id + ","+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
         if(flag){
             if(sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id1, game_Id});
             }else if(!sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id2, game_Id});
             }
         }else{
             if(sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id2, game_Id});
             }else if(!sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id1, game_Id});
             }
         }
+        System.out.println(sql);
+        try {
+
+        } finally {
+            db.close();
+        }
+    }
 
 
+    public void setInsert(boolean flag) {
+        helper = new DatabaseHelper(this);
 
+        try {
+            helper.createDatabase();
+        } catch (
+                IOException e) {
+            throw new Error("Unable to create database");
+        }
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String sql = "UPDATE SET_TBL SET V_OPPONENTS_ID = ?, START_TIME = CURRENT_TIMESTAMP, END_TIME = CURRENT_TIMESTAMP WHERE SET_ID = '1';";
+
+        if(flag){
+            if(sideFlag){
+                db.execSQL(sql, new String[]{player_Id1});
+            }else{
+                db.execSQL(sql, new String[]{player_Id2});
+            }
+
+        }else{
+            if(sideFlag){
+                db.execSQL(sql, new String[]{player_Id2});
+            }else{
+                db.execSQL(sql, new String[]{player_Id1});
+            }
+        }
 
         try {
             Cursor cursor = db.rawQuery(sql, null);
@@ -848,9 +879,17 @@ public class CountActivity extends AppCompatActivity {
         }
     }
 
-
-    public void gameInsert2(){
+    public void pointDelete(){
         helper = new DatabaseHelper(this);
+
+        String point_Id = "";
+
+        if(count1 + count2 <= 9){
+            point_Id = String.valueOf("0" + (count1 + count2));
+        }else{
+            point_Id = String.valueOf(count1 + count2);
+        }
+
         try {
             helper.createDatabase();
         } catch (
@@ -859,81 +898,11 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
+        String sql = "DELETE FROM POINT_TBL WHERE POINT_ID = ?;";
 
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
-            }
-
-        } finally {
-            db.close();
-        }
-
-    }
-
-    public void setInsert1() {
-        helper = new DatabaseHelper(this);
-        try {
-            helper.createDatabase();
-        } catch (
-                IOException e) {
-            throw new Error("Unable to create database");
-        }
-
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
-        if(sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }else if(!sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }
-
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
-            }
-
-        } finally {
-            db.close();
-        }
-    }
-
-
-    public void setInsert2() {
-        helper = new DatabaseHelper(this);
-        try {
-            helper.createDatabase();
-        } catch (
-                IOException e) {
-            throw new Error("Unable to create database");
-        }
-
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
-        if(sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }else if(!sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }
-
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
-            }
-
-        } finally {
-            db.close();
-        }
+        db.execSQL(sql, new String[]{point_Id});
+        //単純にひとつ前に実行した処理を戻す処理にする
+        //ボタンも一つに統一する
     }
 
 

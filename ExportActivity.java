@@ -54,6 +54,9 @@ public class ExportActivity extends AppCompatActivity {
     //String nameA = "";
     //String nameB = "";
 
+    String setScoreA ="";
+    String setScoreB ="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,10 +135,10 @@ public class ExportActivity extends AppCompatActivity {
             while (cursor4.moveToNext()) {
                 pointA = cursor4.getString(0);
             }
+
             while (cursor5.moveToNext()) {
                 pointB = cursor5.getString(0);
             }
-
 
             TextView point1 = findViewById(R.id.GameScore1);
 
@@ -146,7 +149,7 @@ public class ExportActivity extends AppCompatActivity {
             } else {
                 point1.setText(pointA);
             }
-            point1 = findViewById(R.id.GameScore1);
+            //point1 = findViewById(R.id.GameScore1);
 
 
 
@@ -160,7 +163,7 @@ public class ExportActivity extends AppCompatActivity {
                 point2.setText(pointB);
             }
 
-            point2 = findViewById(R.id.GameScore2);
+            //point2 = findViewById(R.id.GameScore2);
 
 
 
@@ -179,6 +182,23 @@ public class ExportActivity extends AppCompatActivity {
             TextView name2 = findViewById(R.id.Name2);
             name2.setText(nameB);
             name2 = findViewById(R.id.Name2);*/
+
+            TextView setScore1 = findViewById(R.id.SetScore1);
+
+
+           if(pointA.equals("5")&&(!(pointB.equals("6")))|| pointA.equals("6")) {
+                setScore1.setText("1");
+            }
+
+            TextView setScore2 = findViewById(R.id.SetScore2);
+
+
+
+           if(pointB.equals("5")&&(!(pointA.equals("6")))||pointB.equals("6")) {
+                setScore2.setText("1");
+            }
+
+
 
 
 

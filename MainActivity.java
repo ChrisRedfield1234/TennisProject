@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         String sql1 = "DELETE FROM POINT_TBL;";
-        String sql2 = "DELETE FROM GAME_TBL;";
-        String sql3 = "DELETE FROM SET_TBL;";
+        String sql2 = "UPDATE GAME_TBL SET V_OPPONENTS_ID = 0, START_TIME = NULL, END_TIME = NULL;";
+        String sql3 = "UPDATE SET_TBL SET V_OPPONENTS_ID = 0, START_TIME = NULL, END_TIME = NULL;";
         String sql4 = "DELETE FROM SERVER_TBL;";
         String sql5 = "DELETE FROM SIDE_TBL;";
 
