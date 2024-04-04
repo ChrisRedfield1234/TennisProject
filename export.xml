@@ -59,10 +59,9 @@
         app:layout_constraintVertical_bias="0.384" />
 
     <TextView
-        android:id="@+id/textView33"
+        android:id="@+id/SetScore1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1"
         android:textSize="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -111,19 +110,9 @@
         app:layout_constraintVertical_bias="0.42" />
 
     <TextView
-        android:id="@+id/textView43"
-        android:layout_width="15dp"
-        android:layout_height="37dp"
-        android:text="6"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView37"
+        android:id="@+id/SetScore2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
         android:textSize="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 public class CountActivity extends AppCompatActivity {
@@ -35,8 +37,6 @@ public class CountActivity extends AppCompatActivity {
     boolean F_Flag2 = false;
     boolean c_Flag1 = false;
     boolean c_Flag2 = false;
-    boolean m_Flag1 = false;
-    boolean m_Flag2 = false;
     boolean f_Flag1 = false;
     boolean f_Flag2 = false;
     boolean a_Flag1 = false;
@@ -62,14 +62,13 @@ public class CountActivity extends AppCompatActivity {
 
         TextView name1 = findViewById(R.id.name1);
         TextView name2 = findViewById(R.id.name2);
-        TextView count1 = findViewById(R.id.point1);
-        TextView count2 = findViewById(R.id.point2);
-        Button minus1 = findViewById(R.id.m_btn1);
-        Button minus2 = findViewById(R.id.m_btn2);
+        TextView count01 = findViewById(R.id.point1);
+        TextView count02 = findViewById(R.id.point2);
         Button fault1 = findViewById(R.id.fault1);
         Button fault2 = findViewById(R.id.fault2);
         Button ace1 = findViewById(R.id.ace1);
         Button ace2 = findViewById(R.id.ace2);
+        Button decrement = findViewById(R.id.Decrement);
 
         helper = new DatabaseHelper(this);
 
@@ -122,40 +121,26 @@ public class CountActivity extends AppCompatActivity {
 
         serverActivity();
 
-        count1.setOnClickListener((View v) -> {
+        count01.setOnClickListener((View v) -> {
             countActivity1();
             historyActivity(c_Flag1);
-            count1.setTextColor(Color.BLUE);
+            count01.setTextColor(Color.BLUE);
             c_Flag1 = true;
 
         });
 
-        count2.setOnClickListener((View v) -> {
+        count02.setOnClickListener((View v) -> {
             countActivity2();
             historyActivity(c_Flag2);
-            count2.setTextColor(Color.BLUE);
+            count02.setTextColor(Color.BLUE);
             c_Flag2 = true;
-        });
-
-        minus1.setOnClickListener((View v) -> {
-            minusActivity1();
-            historyActivity(m_Flag1);
-            minus1.setTextColor(Color.BLUE);
-            m_Flag1 = true;
-        });
-
-        minus2.setOnClickListener((View v) -> {
-            minusActivity2();
-            historyActivity(m_Flag2);
-            minus2.setTextColor(Color.BLUE);
-            m_Flag2 = true;
         });
 
         fault1.setOnClickListener((View v) -> {
             faultActivity1();
             historyActivity(f_Flag1);
             if(f_Flag1){
-                count2.setTextColor(Color.BLUE);
+                count02.setTextColor(Color.BLUE);
             }
             fault1.setTextColor(Color.BLUE);
             f_Flag1 = true;
@@ -165,7 +150,7 @@ public class CountActivity extends AppCompatActivity {
             faultActivity2();
             historyActivity(f_Flag2);
             if(f_Flag2){
-                count1.setTextColor(Color.BLUE);
+                count01.setTextColor(Color.BLUE);
             }
             fault2.setTextColor(Color.BLUE);
             f_Flag2 = true;
@@ -173,7 +158,7 @@ public class CountActivity extends AppCompatActivity {
 
         ace1.setOnClickListener((View v) -> {
             historyActivity(a_Flag1);
-            count1.setTextColor(Color.BLUE);
+            count01.setTextColor(Color.BLUE);
             ace1.setTextColor(Color.BLUE);
             a_Flag1 = true;
             a_flag1 = "1";
@@ -183,12 +168,18 @@ public class CountActivity extends AppCompatActivity {
 
         ace2.setOnClickListener((View v) -> {
             historyActivity(a_Flag2);
-            count2.setTextColor(Color.BLUE);
+            count02.setTextColor(Color.BLUE);
             ace2.setTextColor(Color.BLUE);
             a_Flag2 = true;
             a_flag2 = "1";
             countActivity2();
             a_flag2 = "0";
+        });
+
+        decrement.setOnClickListener((View v) -> {
+            if(count1 + count2 >= 1){
+                pointDelete();
+            }
         });
 
     }
@@ -240,19 +231,20 @@ public class CountActivity extends AppCompatActivity {
             if(count1 >= 7 && count1 - count2 == 1 || count1 >= 6 && count1 - count2 >= 2){
                 count1++;
                 point1.setText(String.valueOf(count1));
+                pointInsert(true);
+                checkGamecount1();
                 startActivity(new Intent(this, ExportActivity.class));
             }else{
                 count1++;
                 point1.setText(String.valueOf(count1));
+                pointInsert(true);
             }
 
             if((count1 + count2) % 6 == 0) {
                 sideChangeActivity();
             }
 
-            System.out.println("ポイント合計：" + (count1 + count2));
             if(count1 + count2 == 1 || (count1 + count2) % 2 == 1){
-                System.out.println("serverActivityへ");
                 serverActivity();
             }
 
@@ -260,6 +252,7 @@ public class CountActivity extends AppCompatActivity {
         f_flag1 = "0";
         w_flag1 = "0";
         falseLiset();
+
     }
 
     public void countActivity2(){
@@ -308,19 +301,20 @@ public class CountActivity extends AppCompatActivity {
             if (count2 >= 7 && count2- count1 == 1 || count2 >= 6 && count2- count1 >= 2) {
                 count2++;
                 point2.setText(String.valueOf(count2));
+                pointInsert(false);
+                checkGamecount2();
                 startActivity(new Intent(this, ExportActivity.class));
             }else{
                 count2++;
                 point2.setText(String.valueOf(count2));
+                pointInsert(false);
             }
 
             if((count2 + count1) % 6 == 0) {
                 sideChangeActivity();
             }
 
-            System.out.println("ポイント合計：" + (count1 + count2));
             if(count1 + count2 == 1 || (count1 + count2) % 2 == 1){
-                System.out.println("serverActivityへ");
                 serverActivity();
             }
 
@@ -328,6 +322,7 @@ public class CountActivity extends AppCompatActivity {
         f_flag2 = "0";
         w_flag2 = "0";
         falseLiset();
+
     }
 
     public void falseLiset(){
@@ -344,13 +339,15 @@ public class CountActivity extends AppCompatActivity {
         if(gCount1 == 5 && gCount2 < 5){
             gCount1++;
             sCount1++;
-            setInsert1();
+            gameInsert(true);
+            setInsert(true);
             serverActivity();
             checkSetcount1();
         }else if(gCount1 == 6 && gCount2 == 5){
             gCount1++;
             sCount1++;
-            setInsert1();
+            gameInsert(true);
+            setInsert(true);
             serverActivity();
             checkSetcount1();
         }else if(gCount1 == 5 && gCount2 == 6) {
@@ -365,7 +362,7 @@ public class CountActivity extends AppCompatActivity {
             gCount1++;
             sCount1++;
             gPoint1.setText(Integer.toString(gCount1));
-            serverActivity();
+            gameInsert(true);
             checkSetcount1();
         }else if(gCount2 <= 5){
             gCount1++;
@@ -375,23 +372,23 @@ public class CountActivity extends AppCompatActivity {
             sideChangeActivity();
             serverActivity();
         }
-
-        System.out.println("gCount1：" + gCount1);
-        System.out.println("gCount2：" + gCount2);
     }
 
     public void checkGamecount2(){
         TextView gPoint2 = (TextView)findViewById(R.id.gamecount2);
+
         if(gCount2 == 5 && gCount1 < 5){
             gCount2++;
             sCount2++;
-            setInsert2();
+            gameInsert(false);
+            setInsert(false);
             serverActivity();
             checkSetcount2();
         }else if(gCount2 == 6 && gCount1 == 5){
             gCount2++;
             sCount2++;
-            setInsert2();
+            gameInsert(false);
+            setInsert(false);
             serverActivity();
             checkSetcount2();
         }else if(gCount2 == 5 && gCount1 == 6) {
@@ -401,13 +398,12 @@ public class CountActivity extends AppCompatActivity {
             gameInsert(false);
             serverActivity();
             tiebreakActivity();
-            //sideChangeActivity();
         }else if(gCount1 == 6 && gCount2 == 6){
             //タイブレーク勝利
             gCount2++;
             sCount2++;
             gPoint2.setText(Integer.toString(gCount2));
-            serverActivity();
+            gameInsert(false);
             checkSetcount2();
         }else if(gCount1 <= 5){
             gCount2++;
@@ -417,8 +413,6 @@ public class CountActivity extends AppCompatActivity {
             sideChangeActivity();
             serverActivity();
         }
-        System.out.println("gCount1：" + gCount1);
-        System.out.println("gCount2：" + gCount2);
     }
 
     public void checkSetcount1(){
@@ -438,52 +432,8 @@ public class CountActivity extends AppCompatActivity {
         }
     }
 
-    //2/20追加
-
     public void tiebreakActivity() {
         tie_Flag = true;
-    }
-
-    public void minusActivity1(){
-        TextView point1 = (TextView)findViewById(R.id.point1);
-        TextView point2 = (TextView)findViewById(R.id.point2);
-        if(count1 >= 4 && count1 % 2 == 0 && count2 >= 3 && count2 % 2 == 1) {
-            point1.setText("40");
-            count1--;
-        }else if(count2 >= 4 && count2 % 2 == 0 && count1 >= 3 && count1 % 2 == 1){
-            point2.setText("40");
-            count2--;
-        }else if(count1 == 3){
-            point1.setText("30");
-            count1--;
-        }else if(count1 == 2){
-            point1.setText("15");
-            count1--;
-        }else if(count1 == 1){
-            point1.setText("0");
-            count1--;
-        }
-    }
-
-    public void minusActivity2() {
-        TextView point1 = (TextView) findViewById(R.id.point1);
-        TextView point2 = (TextView) findViewById(R.id.point2);
-        if(count2 >= 4 && count2 % 2 == 0 && count1 >= 3 && count1 % 2 == 1) {
-            point2.setText("40");
-            count2--;
-        }else if(count1 >= 4 && count1 % 2 == 0 && count2 >= 3 && count2 % 2 == 1){
-            point1.setText("40");
-            count1--;
-        }else if(count2 == 3){
-            point2.setText("30");
-            count2--;
-        }else if(count2 == 2){
-            point2.setText("15");
-            count2--;
-        }else if(count2 == 1){
-            point2.setText("0");
-            count2--;
-        }
     }
 
     public void sideChangeActivity(){
@@ -630,8 +580,6 @@ public class CountActivity extends AppCompatActivity {
     public void historyActivity(boolean flag){
         TextView count1 = findViewById(R.id.point1);
         TextView count2 = findViewById(R.id.point2);
-        Button minus1 = findViewById(R.id.m_btn1);
-        Button minus2 = findViewById(R.id.m_btn2);
         Button fault1 = findViewById(R.id.fault1);
         Button fault2 = findViewById(R.id.fault2);
         Button ace1 = findViewById(R.id.ace1);
@@ -644,20 +592,10 @@ public class CountActivity extends AppCompatActivity {
         }else if(c_Flag2){
             count2.setTextColor(Color.BLACK);
             c_Flag2 = false;
-        }else if(m_Flag1){
-            count2.setTextColor(Color.BLACK);
-            m_Flag1 = false;
-        }else if(m_Flag2){
-            count2.setTextColor(Color.BLACK);
-            m_Flag2 = false;
         }else if(f_Flag1){
             fault1.setTextColor(Color.WHITE);
             count2.setTextColor(Color.BLACK);
             f_Flag1 = false;
-        }else if(m_Flag2){
-            fault1.setTextColor(Color.WHITE);
-            count2.setTextColor(Color.BLACK);
-            m_Flag2 = false;
         }else if(a_Flag1){
             ace1.setTextColor(Color.WHITE);
             count1.setTextColor(Color.BLACK);
@@ -690,6 +628,10 @@ public class CountActivity extends AppCompatActivity {
         TextView s_Mark2 = (TextView)findViewById(R.id.servermark2);
         TextView name1 = (TextView)findViewById(R.id.name1);
         TextView name2 = (TextView)findViewById(R.id.name2);
+        Button fault1 = findViewById(R.id.fault1);
+        Button fault2 = findViewById(R.id.fault2);
+        Button ace1 = findViewById(R.id.ace1);
+        Button ace2 = findViewById(R.id.ace2);
 
         if(s_Mark1.getText().equals("") && s_Mark2.getText().equals("")){
 
@@ -708,27 +650,39 @@ public class CountActivity extends AppCompatActivity {
             }
         }
         if(s_flag.equals(player_Id1)){
-            System.out.println("player_Id1");
             if(name1.getText().equals(player_Last_Name1 + player_First_Name1)){
-                System.out.println("A");
                 s_Mark1.setText("▶");
                 s_Mark2.setText("");
+                fault1.setEnabled(true);
+                fault2.setEnabled(false);
+                ace1.setEnabled(true);
+                ace2.setEnabled(false);
             }else if(name2.getText().equals(player_Last_Name1 + player_First_Name1)){
-                System.out.println("B");
                 s_Mark2.setText("▶");
                 s_Mark1.setText("");
+                fault1.setEnabled(false);
+                fault2.setEnabled(true);
+                ace1.setEnabled(false);
+                ace2.setEnabled(true);
+
             }
         }else if(s_flag.equals(player_Id2)){
-            //ここまでは来てる、以下の畏怖分修正する必要あり
-            System.out.println("player_Id2");
             if(name1.getText().equals(player_Last_Name2 + player_First_Name2)){
-                System.out.println("C");
                 s_Mark1.setText("▶");
                 s_Mark2.setText("");
+                fault1.setEnabled(true);
+                fault2.setEnabled(false);
+                ace1.setEnabled(true);
+                ace2.setEnabled(false);
+
             }else if(name2.getText().equals(player_Last_Name2 + player_First_Name2)){
-                System.out.println("D");
                 s_Mark2.setText("▶");
                 s_Mark1.setText("");
+                fault1.setEnabled(false);
+                fault2.setEnabled(true);
+                ace1.setEnabled(false);
+                ace2.setEnabled(true);
+
             }
         }
 
@@ -736,6 +690,21 @@ public class CountActivity extends AppCompatActivity {
 
     public void pointInsert(boolean flag){
         helper = new DatabaseHelper(this);
+        String game_Id = "";
+        String point_Id = "";
+
+        if(gCount1 + gCount2 + 1 <= 9){
+            game_Id = String.valueOf("0" + (gCount1 + gCount2 + 1));
+        }else{
+            game_Id = String.valueOf(gCount1 + gCount2 + 1);
+        }
+
+        if(count1 + count2 <= 9){
+            point_Id = String.valueOf("0" + (count1 + count2));
+        }else{
+            point_Id = String.valueOf(count1 + count2);
+        }
+
         try {
             helper.createDatabase();
         } catch (
@@ -744,71 +713,41 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
+        String sql = "INSERT INTO POINT_TBL VALUES(1,1,?,?,?,?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+        //sql = "INSERT INTO POINT_TBL VALUES(1,0,"+ game_Id +","+ point_Id +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+
+        //Log.d("PointInsert", "game_Id: " + game_Id + ", point_Id: " + point_Id);
+        //Log.d("PointInsert", "Player ID: " + (flag ? player_Id1 : player_Id2) + ", f_flag1: " + f_flag1 + ", w_flag1: " + w_flag1 + ", a_flag1: " + a_flag1);
 
         if(flag){
             if(sideFlag){
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id1,f_flag1,w_flag1,a_flag1});
             }else{
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag2 + ","+ a_flag1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag1);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id2,f_flag1,w_flag1,a_flag1});
             }
         }else{
             if(sideFlag){
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id2,f_flag1,w_flag1,a_flag2});
             }else{
-                sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag2 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-                System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
+                db.execSQL(sql, new String[]{game_Id, point_Id,player_Id1,f_flag1,w_flag1,a_flag2});
             }
         }
 
-
-
         try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
-            }
 
         } finally {
             db.close();
         }
     }
-
-    public void pointInsert2(){
-        helper = new DatabaseHelper(this);
-        try {
-            helper.createDatabase();
-        } catch (
-                IOException e) {
-            throw new Error("Unable to create database");
-        }
-
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
-        if(sideFlag){
-            sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-            System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id2 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
-        }else{
-            sql = "INSERT INTO POINT_TBL VALUES(1,0,"+(gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag2 + ","+ a_flag2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-            System.out.println("1,0," + (gCount1 + gCount2 + 1) +","+ (count1 + count2) +","+ player_Id1 +"," + f_flag1 + "," + w_flag1 + ","+ a_flag2);
-        }
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-
-        } finally {
-            db.close();
-        }
-    }
-
 
     public void gameInsert(boolean flag) {
         helper = new DatabaseHelper(this);
+        String game_Id = "";
+        if(gCount1 + gCount2 <= 9){
+            game_Id = String.valueOf("0" + (gCount1 + gCount2));
+        }else{
+            game_Id = String.valueOf(gCount1 + gCount2);
+        }
         try {
             helper.createDatabase();
         } catch (
@@ -817,31 +756,23 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
+        String sql = "UPDATE GAME_TBL SET V_OPPONENTS_ID = ?, START_TIME = CURRENT_TIMESTAMP, END_TIME = CURRENT_TIMESTAMP WHERE GAME_ID = ?;";
+        //sql = "INSERT INTO GAME_TBL VALUES(1,0," + "0" + game_Id + ","+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 
         if(flag){
             if(sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id1, game_Id});
             }else if(!sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id2, game_Id});
             }
         }else{
             if(sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id2, game_Id});
             }else if(!sideFlag){
-                sql = "INSERT INTO GAME_TBL VALUES(1,0," + (gCount1 + gCount2) + ","+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+                db.execSQL(sql, new String[]{player_Id1, game_Id});
             }
         }
-
-
-
-
         try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
-            }
 
         } finally {
             db.close();
@@ -849,8 +780,9 @@ public class CountActivity extends AppCompatActivity {
     }
 
 
-    public void gameInsert2(){
+    public void setInsert(boolean flag) {
         helper = new DatabaseHelper(this);
+
         try {
             helper.createDatabase();
         } catch (
@@ -859,24 +791,45 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
+        String sql = "UPDATE SET_TBL SET V_OPPONENTS_ID = ?, START_TIME = CURRENT_TIMESTAMP, END_TIME = CURRENT_TIMESTAMP WHERE SET_ID = '1';";
 
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
+        if(flag){
+            if(sideFlag){
+                db.execSQL(sql, new String[]{player_Id1});
+            }else{
+                db.execSQL(sql, new String[]{player_Id2});
             }
 
-        } finally {
-            db.close();
+        }else{
+            if(sideFlag){
+                db.execSQL(sql, new String[]{player_Id2});
+            }else{
+                db.execSQL(sql, new String[]{player_Id1});
+            }
         }
 
     }
 
-    public void setInsert1() {
+    public void pointDelete(){
         helper = new DatabaseHelper(this);
+        TextView name1 = findViewById(R.id.name1);
+        TextView name2 = findViewById(R.id.name2);
+
+        String point_Id = "";
+        String game_Id = "";
+
+        if(count1 + count2 <= 9){
+            point_Id = String.valueOf("0" + (count1 + count2));
+        }else{
+            point_Id = String.valueOf(count1 + count2);
+        }
+
+        if(gCount1 + gCount2 + 1 <= 9){
+            game_Id = String.valueOf("0" + (gCount1 + gCount2 + 1));
+        }else{
+            game_Id = String.valueOf(gCount1 + gCount2 + 1);
+        }
+
         try {
             helper.createDatabase();
         } catch (
@@ -885,56 +838,107 @@ public class CountActivity extends AppCompatActivity {
         }
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
-        if(sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }else if(!sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }
+        String sql1 = "SELECT V_OPPONENTS_ID FROM POINT_TBL WHERE POINT_ID = ? AND GAME_ID = ?;";
+        String sql2 = "DELETE FROM POINT_TBL WHERE POINT_ID = ?  AND GAME_ID = ?";
 
+        Cursor cursor = db.rawQuery(sql1, new String[]{point_Id,game_Id});
 
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToNext();
+        if(tie_Flag){
 
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
+            if((count1 + count2) % 6 == 0){
+                sideChangeActivity();
             }
 
-        } finally {
-            db.close();
-        }
-    }
-
-
-    public void setInsert2() {
-        helper = new DatabaseHelper(this);
-        try {
-            helper.createDatabase();
-        } catch (
-                IOException e) {
-            throw new Error("Unable to create database");
-        }
-
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String sql = "";
-        if(sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id2 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }else if(!sideFlag){
-            sql = "INSERT INTO SET_TBL VALUES(1,1,"+ player_Id1 +",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-        }
-
-
-        try {
-            Cursor cursor = db.rawQuery(sql, null);
-
-            if (cursor.getCount() == 0) {
-                // The query returned an empty result set.
+            if(count1 + count2 == 1 || (count1 + count2) % 2 == 1){
+                serverActivity();
             }
 
-        } finally {
-            db.close();
+            if(cursor.getString(0).equals(player_Id1)){
+                if(name1.getText().equals(player_Last_Name1 + player_First_Name1)){
+                    count1--;
+                    pointDecrement(true);
+                }else if(name2.getText().equals(player_Last_Name1 + player_First_Name1)){
+                    count2--;
+                    pointDecrement(false);
+                }
+            }else if(cursor.getString(0).equals(player_Id2)){
+                if(name1.getText().equals(player_Last_Name2 + player_First_Name2)){
+                    count1--;
+                    pointDecrement(true);
+                }else if(name2.getText().equals(player_Last_Name2 + player_First_Name2)){
+                    count2--;
+                    pointDecrement(false);
+                }
+            }
+
+        }else{
+            if(cursor.getString(0).equals(player_Id1)){
+                if(name1.getText().equals(player_Last_Name1 + player_First_Name1)){
+                    count1--;
+                    pointDecrement(true);
+                }else if(name2.getText().equals(player_Last_Name1 + player_First_Name1)){
+                    count2--;
+                    pointDecrement(false);
+                }
+            }else if(cursor.getString(0).equals(player_Id2)){
+                if(name1.getText().equals(player_Last_Name2 + player_First_Name2)){
+                    count1--;
+                    pointDecrement(true);
+                }else if(name2.getText().equals(player_Last_Name2 + player_First_Name2)){
+                    count2--;
+                    pointDecrement(false);
+                }
+            }
         }
+
+        db.execSQL(sql2, new String[]{point_Id,game_Id});
     }
 
+    public void pointDecrement(boolean flag){
+        TextView point1 = (TextView) findViewById(R.id.point1);
+        TextView point2 = (TextView) findViewById(R.id.point2);
+
+        if(!tie_Flag){
+            if(flag){
+                if(count2 == count1 + 1 && count1 + count2 >= 7){
+                    point2.setText("Adv");
+                }else if(count1 == 3 && count1 + count2 <= 5 || count1 == count2 && count1 + count2 >= 6) {
+                    point1.setText("40");
+                }else if(count1 == 2){
+                    point1.setText("30");
+                }else if(count1 == 1){
+                    point1.setText("15");
+                }else if(count1 == 0){
+                    point1.setText("0");
+                }
+
+            }else if(!flag){
+                if(count1 == count2 + 1 && count1 + count2 >= 7){
+                    point1.setText("Adv");
+                }else if(count2 == 3 && count2 + count1 <= 5 || count2 == count1 && count2 + count1 >= 6) {
+                    point2.setText("40");
+                }else if(count2 == 2){
+                    point2.setText("30");
+                }else if(count2 == 1){
+                    point2.setText("15");
+                }else if(count2 == 0){
+                    point2.setText("0");
+                }
+
+            }
+        }else if(tie_Flag){
+
+            if(flag){
+                point1.setText(String.valueOf(count1));
+            }else if(!flag){
+                point2.setText(String.valueOf(count2));
+            }
+
+        }
+
+        falseLiset();
+
+    }
 
 }

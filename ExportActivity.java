@@ -8,9 +8,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -36,10 +38,16 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeUtility;
 
 public class ExportActivity extends AppCompatActivity {
 
@@ -54,6 +62,9 @@ public class ExportActivity extends AppCompatActivity {
     //String nameA = "";
     //String nameB = "";
 
+    String setScoreA ="";
+    String setScoreB ="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +72,13 @@ public class ExportActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Button startbtn = findViewById(R.id.export);
-        startbtn.setOnClickListener((View v) -> {
-            startActivity(new Intent(this, MainActivity.class));
+        startbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //asyncTask a=new asyncTask();
+                //a.execute("gmailより前", "アプリパスワード","試合結果","送信完了\n本文") ;
+                //a.execute("Gmailのアカウント名（@gmail.comの前まで）","Gmailのパスワード","テストタイトル","送信完了\n本文をここに記述する") ;
+            }
         });
 
         Button dialogbtn = findViewById(R.id.dialog2);
@@ -132,13 +148,15 @@ public class ExportActivity extends AppCompatActivity {
             while (cursor4.moveToNext()) {
                 pointA = cursor4.getString(0);
             }
+
             while (cursor5.moveToNext()) {
                 pointB = cursor5.getString(0);
             }
 
-
             TextView point1 = findViewById(R.id.GameScore1);
+            point1.setText(pointA);
 
+            /*
             if(pointA.equals("5")&&!(pointB.equals("6"))) {
                 point1.setText("6");
             } else if(pointA.equals("6")){
@@ -146,12 +164,15 @@ public class ExportActivity extends AppCompatActivity {
             } else {
                 point1.setText(pointA);
             }
-            point1 = findViewById(R.id.GameScore1);
+             */
+            //point1 = findViewById(R.id.GameScore1);
 
 
 
             TextView point2 = findViewById(R.id.GameScore2);
+            point2.setText(pointB);
 
+            /*
             if(pointB.equals("5")&&!(pointA.equals("6"))) {
                 point2.setText("6");
             } else if(pointB.equals("6")) {
@@ -159,8 +180,8 @@ public class ExportActivity extends AppCompatActivity {
             }else {
                 point2.setText(pointB);
             }
-
-            point2 = findViewById(R.id.GameScore2);
+            */
+            //point2 = findViewById(R.id.GameScore2);
 
 
 
@@ -179,6 +200,23 @@ public class ExportActivity extends AppCompatActivity {
             TextView name2 = findViewById(R.id.Name2);
             name2.setText(nameB);
             name2 = findViewById(R.id.Name2);*/
+
+            TextView setScore1 = findViewById(R.id.SetScore1);
+
+
+           if(pointA.equals("5")&&(!(pointB.equals("6")))|| pointA.equals("6")) {
+                setScore1.setText("1");
+            }
+
+            TextView setScore2 = findViewById(R.id.SetScore2);
+
+
+
+           if(pointB.equals("5")&&(!(pointA.equals("6")))||pointB.equals("6")) {
+                setScore2.setText("1");
+            }
+
+
 
 
 
@@ -425,16 +463,6 @@ public class ExportActivity extends AppCompatActivity {
             path = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString();
             file = path + "/" + fileName;
 
-            //以下左側のserviceを囲めたやつ
-            /*
-            HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
-            HSSFClientAnchor a = new HSSFClientAnchor(5, 5, 1023, 255, (short) 13, 20, (short) 15, 20);
-            HSSFSimpleShape shape = patriarch.createSimpleShape(a);
-            // 図形の形状を楕円形に設定
-            shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
-            // 塗りつぶしをなしに設定
-            shape.setNoFill(true);
-*/
             FileOutputStream fos = new FileOutputStream(file);
             excel.write(fos);
             excel.close();
@@ -442,6 +470,58 @@ public class ExportActivity extends AppCompatActivity {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    private class asyncTask extends android.os.AsyncTask{
+        protected String account;
+        protected String password;
+        protected String title;
+        protected String text;
+
+        @Override
+        protected Object doInBackground(Object... obj){
+            account=(String)obj[0];
+            password=(String)obj[1];
+            title=(String)obj[2];
+            text=(String)obj[3];
+
+            java.util.Properties properties = new java.util.Properties();
+            properties.put("mail.smtp.host", "smtp.gmail.com");
+            properties.put("mail.smtp.auth", "true");
+            properties.put("mail.smtp.port", "465");
+            properties.put("mail.smtp.socketFactory.post", "465");
+            properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
+            final javax.mail.Message msg = new javax.mail.internet.MimeMessage(javax.mail.Session.getDefaultInstance(properties, new javax.mail.Authenticator(){
+                @Override
+                protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                    return new javax.mail.PasswordAuthentication(account,password);
+                }
+            }));
+
+            try {
+                msg.setFrom(new javax.mail.internet.InternetAddress(account + "@gmail.com"));
+                //自分自身にメールを送信
+                msg.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(account + "@gmail.com"));
+                msg.setSubject(title);
+                msg.setText(text);
+
+                javax.mail.Transport.send(msg);
+
+            } catch (Exception e) {
+                return (Object)e.toString();
+            }
+
+            return (Object)"送信が完了しました";
+
+        }
+
+        @Override
+        protected void onPostExecute(Object obj) {
+            //画面にメッセージを表示する
+            Toast.makeText(ExportActivity.this,(String)obj,Toast.LENGTH_LONG).show();
         }
     }
 

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -40,8 +41,6 @@ public class tossActivity extends AppCompatActivity {
     int assignment1 = 0;
     int assignment2 = 0;
     private DatabaseHelper helper;
-    MATCH_DTO m_dto = new MATCH_DTO();
-    ArrayList<PLAYER_DTO> playerList = new ArrayList<PLAYER_DTO>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -306,8 +305,14 @@ public class tossActivity extends AppCompatActivity {
 
         Button startbtn = findViewById(R.id.button2);
         startbtn.setOnClickListener((View v) -> {
-            tossUpdate();
-            startActivity(new Intent(this, CountActivity.class));
+            if(toss1 + toss2 >= 1 && server1 + receiver1 + server2 + receiver2 >= 1 && left1 + right1 + left2 + right2 >= 1){
+                tossUpdate();
+                startActivity(new Intent(this, CountActivity.class));
+            }else{
+                onPostExecute("入力情報が不足しています");
+                //return (Object)"送信が完了しました";
+            }
+
 
         });
     }
@@ -440,4 +445,10 @@ public class tossActivity extends AppCompatActivity {
                 db.close();
         }
     }
+
+    protected void onPostExecute(Object obj) {
+        //画面にメッセージを表示する
+        Toast.makeText(tossActivity.this,(String)obj,Toast.LENGTH_LONG).show();
+    }
+
 }

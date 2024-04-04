@@ -48,6 +48,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public DatabaseHelper(LoginActivity context) {
+        super(context, DB_NAME, null, DATABASE_VERSION);
+        mContext = context;
+        mDatabasePath = mContext.getDatabasePath(DB_NAME);
+
+    }
+
     /**
      * asset に格納したデータベースをコピーするための空のデータベースを作成する
      */
