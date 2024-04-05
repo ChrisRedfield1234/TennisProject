@@ -44,10 +44,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/*
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeUtility;
+
+ */
 
 public class ExportActivity extends AppCompatActivity {
 
@@ -473,7 +476,7 @@ public class ExportActivity extends AppCompatActivity {
         }
     }
 
-
+/*
     private class asyncTask extends android.os.AsyncTask{
         protected String account;
         protected String password;
@@ -524,6 +527,8 @@ public class ExportActivity extends AppCompatActivity {
             Toast.makeText(ExportActivity.this,(String)obj,Toast.LENGTH_LONG).show();
         }
     }
+
+ */
 
     public void showDialog(View view) {
         DialogFragment dialogFragment = new ExportDialogFragment();
