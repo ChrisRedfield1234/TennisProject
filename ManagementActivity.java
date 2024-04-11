@@ -18,14 +18,15 @@ public class ManagementActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Button entry = findViewById(R.id.entry);
-        Button edit = findViewById(R.id.edit);
+        Button list = findViewById(R.id.list);
 
         entry.setOnClickListener((View v) -> {
+            //startActivity(new Intent(this, PlayerEntryActivity.class));
             startActivity(new Intent(this, PlayerEntryActivity.class));
         });
 
-        edit.setOnClickListener((View v) -> {
-
+        list.setOnClickListener((View v) -> {
+            startActivity(new Intent(this, PlayerManagement.class));
         });
 
     }
