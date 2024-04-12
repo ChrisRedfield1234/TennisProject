@@ -83,6 +83,8 @@ public class PlayerEntryActivity extends AppCompatActivity {
 
             db.execSQL(sql2, new String[]{gn,last,first});
 
+            onPostExecute("選手登録が完了しました");
+
         }
 
     }

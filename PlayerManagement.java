@@ -12,9 +12,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -24,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerManagement extends AppCompatActivity {
     private DatabaseHelper helper;
@@ -37,10 +35,46 @@ public class PlayerManagement extends AppCompatActivity {
         List<Map<String, String>> androidVersionList = selectPlayer();
 
         Button returnbtn = findViewById(R.id.returnbtn);
+        Button editbtn = findViewById(R.id.edit);
+        Button deletebtn = findViewById(R.id.delete);
+        AtomicBoolean edit_Flag = new AtomicBoolean(false);
+        AtomicBoolean delete_Flag = new AtomicBoolean(false);
 
         returnbtn.setOnClickListener((View v) -> {
-            //startActivity(new Intent(this, PlayerEntryActivity.class));
             startActivity(new Intent(this, ManagementActivity.class));
+        });
+
+        editbtn.setOnClickListener((View v) -> {
+            if(!edit_Flag.get()){
+
+                editbtn.setBackgroundColor(Color.RED);
+                edit_Flag.set(true);
+                deletebtn.setBackgroundColor(Color.BLUE);
+                delete_Flag.set(false);
+
+            }else if(edit_Flag.get()){
+                editbtn.setBackgroundColor(Color.BLUE);
+                edit_Flag.set(false);
+            }
+
+        });
+
+        deletebtn.setOnClickListener((View v) -> {
+            if(!delete_Flag.get()){
+
+                deletebtn.setBackgroundColor(Color.RED);
+                delete_Flag.set(true);
+                editbtn.setBackgroundColor(Color.BLUE);
+                edit_Flag.set(false);
+
+            }else if(delete_Flag.get()){
+
+                deletebtn.setBackgroundColor(Color.BLUE);
+                delete_Flag.set(false);
+
+            }
+
+
         });
 
         SimpleAdapter androidVersionListAdapter = new SimpleAdapter(
@@ -55,14 +89,18 @@ public class PlayerManagement extends AppCompatActivity {
 
         listView.setAdapter(androidVersionListAdapter);
 
+        Intent intent = new Intent(this, PlayerEditActivity.class);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, String> itemMap = (Map<String, String>) listView.getItemAtPosition(position);
-                String platformVersion = itemMap.get("versionCode");
-                String msg = "ItemClick : " + platformVersion;
-                Log.v("OnItemClick", msg);
-                showDialog(view);
+                if(edit_Flag.get()){
+                    String player_Id = itemMap.get("プレイヤーID");
+                    intent.putExtra("EXTRA_DATA",player_Id);
+                    startActivity(intent);
+                }
+                //showDialog(view);
             }
         });
 
