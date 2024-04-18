@@ -1,5 +1,7 @@
 package com.example.tennisproject;
 
+import static com.example.tennisproject.MainActivity.player_Id1;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -10,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ComponentActivity;
@@ -30,7 +33,12 @@ public class PlayerEditActivity extends AppCompatActivity {
         String player_Id = intent.getStringExtra("EXTRA_DATA");
         setPlayer(player_Id);
 
+        Button updatebtn = findViewById(R.id.update);
         Button returnbtn = findViewById(R.id.returnbtn);
+
+        updatebtn.setOnClickListener((View v) -> {
+            updatePlayer(player_Id);
+        });
 
         returnbtn.setOnClickListener((View v) -> {
             startActivity(new Intent(this, PlayerManagement.class));
@@ -70,12 +78,7 @@ public class PlayerEditActivity extends AppCompatActivity {
         lastName.setText(cursor.getString(0));
         firstName.setText(cursor.getString(1));
 
-        PlayerList_DTO dto = new PlayerList_DTO();
-        PLAYER_DTO dto2 = new PLAYER_DTO();
-        dto2.setLastName(cursor.getString(0));
-        dto2.setFirstName(cursor.getString(1));
-        dto.setDto(dto2);
-        dto.setGroup_Name(cursor.getString(2));
+
 
     }
 
@@ -102,5 +105,49 @@ public class PlayerEditActivity extends AppCompatActivity {
 
         return adapter;
     }
+
+    public void updatePlayer(String player_Id){
+        TextView lastName = findViewById(R.id.edit_lastname);
+        TextView firstName = findViewById(R.id.edit_firstname);
+        Spinner groupName = findViewById(R.id.spinner);
+
+        String last = String.valueOf(lastName.getText());
+        String first = String.valueOf(firstName.getText());
+        String gp = String.valueOf(groupName.getSelectedItem());
+
+        helper = new DatabaseHelper(this);
+
+        if(last.isEmpty() || first.isEmpty() || gp.isEmpty()){
+
+            onPostExecute("入力情報が不足しています");
+
+        }else{
+
+            try {
+
+                helper.createDatabase();
+
+            } catch (IOException e) {
+                throw new Error("Unable to create database");
+            }
+
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            String sql ="UPDATE PLAYER_TBL SET GROUP_ID = (SELECT GROUP_TBL.GROUP_ID FROM GROUP_TBL WHERE GROUP_NAME = ?),PLAYER_LAST_NAME = ?,PLAYER_FIRST_NAME = ? WHERE PLAYER_ID = ?;";
+
+            db.execSQL(sql, new String[]{gp,last,first,player_Id});
+
+            onPostExecute("選手情報の更新が完了しました");
+
+        }
+
+
+    }
+
+    protected void onPostExecute(Object obj) {
+        //画面にメッセージを表示する
+        Toast.makeText(PlayerEditActivity.this,(String)obj,Toast.LENGTH_LONG).show();
+    }
+
 
 }
