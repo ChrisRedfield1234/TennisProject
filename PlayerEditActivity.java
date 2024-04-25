@@ -1,7 +1,5 @@
 package com.example.tennisproject;
 
-import static com.example.tennisproject.MainActivity.player_Id1;
-
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ComponentActivity;
 
 import java.io.IOException;
 
@@ -54,7 +51,7 @@ public class PlayerEditActivity extends AppCompatActivity {
 
 
     public void setPlayer(String player_Id){
-        TextView lastName = findViewById(R.id.edit_lastname);
+        TextView lastName = findViewById(R.id.edit_);
         TextView firstName = findViewById(R.id.edit_firstname);
         Spinner groupName = findViewById(R.id.spinner);
 
@@ -107,7 +104,7 @@ public class PlayerEditActivity extends AppCompatActivity {
     }
 
     public void updatePlayer(String player_Id){
-        TextView lastName = findViewById(R.id.edit_lastname);
+        TextView lastName = findViewById(R.id.edit_);
         TextView firstName = findViewById(R.id.edit_firstname);
         Spinner groupName = findViewById(R.id.spinner);
 

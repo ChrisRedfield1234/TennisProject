@@ -2,7 +2,6 @@ package com.example.tennisproject;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +18,7 @@ public class ManagementActivity extends AppCompatActivity {
 
         Button entry = findViewById(R.id.entry);
         Button list = findViewById(R.id.list);
+        Button t_edit = findViewById(R.id.tournament_edit);
 
         entry.setOnClickListener((View v) -> {
             //startActivity(new Intent(this, PlayerEntryActivity.class));
@@ -27,6 +27,10 @@ public class ManagementActivity extends AppCompatActivity {
 
         list.setOnClickListener((View v) -> {
             startActivity(new Intent(this, PlayerManagement.class));
+        });
+
+        t_edit.setOnClickListener((View v) -> {
+            startActivity(new Intent(this, TournamentEdit.class));
         });
 
     }

@@ -1,8 +1,5 @@
 package com.example.tennisproject;
 
-import static com.example.tennisproject.MainActivity.player_Id2;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -49,7 +46,7 @@ public class PlayerEntryActivity extends AppCompatActivity {
     }
 
     public void entryPlayer(){
-        EditText lastname = findViewById(R.id.edit_lastname);
+        EditText lastname = findViewById(R.id.edit_);
         EditText firstname = findViewById(R.id.edit_firstname);
         Spinner spinner = findViewById(R.id.spinner);
 

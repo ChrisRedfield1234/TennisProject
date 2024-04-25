@@ -35,5 +35,7 @@
         <activity android:name=".Server_DTO"/>
         <activity android:name=".PlayerManagement"/>
         <activity android:name=".PlayerEditActivity"/>
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".TournamentEdit"/>
     </application>
 </manifest>
