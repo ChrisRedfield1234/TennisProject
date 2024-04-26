@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.951" />
 
     <Button
-        android:id="@+id/update"
+        android:id="@+id/save"
         android:layout_width="182dp"
         android:layout_height="67dp"
         android:onClick="showDialog"
@@ -109,7 +109,7 @@
         app:layout_constraintVertical_bias="0.554" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/block"
         android:layout_width="207dp"
         android:layout_height="36dp"
         app:layout_constraintBottom_toBottomOf="parent"

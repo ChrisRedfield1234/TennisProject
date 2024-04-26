@@ -32,7 +32,7 @@ public class PlayerEntryActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapter = setSpinner(adapter);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.block);
         spinner.setAdapter(adapter);
 
         entry.setOnClickListener((View v) -> {
@@ -48,7 +48,7 @@ public class PlayerEntryActivity extends AppCompatActivity {
     public void entryPlayer(){
         EditText lastname = findViewById(R.id.edit_);
         EditText firstname = findViewById(R.id.edit_firstname);
-        Spinner spinner = findViewById(R.id.spinner);
+        Spinner spinner = findViewById(R.id.block);
 
         String last = String.valueOf(lastname.getText());
         String first = String.valueOf(firstname.getText());

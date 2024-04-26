@@ -30,7 +30,7 @@ public class PlayerEditActivity extends AppCompatActivity {
         String player_Id = intent.getStringExtra("EXTRA_DATA");
         setPlayer(player_Id);
 
-        Button updatebtn = findViewById(R.id.update);
+        Button updatebtn = findViewById(R.id.save);
         Button returnbtn = findViewById(R.id.returnbtn);
 
         updatebtn.setOnClickListener((View v) -> {
@@ -44,7 +44,7 @@ public class PlayerEditActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapter = setSpinner(adapter);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.block);
         spinner.setAdapter(adapter);
 
     }
@@ -53,7 +53,7 @@ public class PlayerEditActivity extends AppCompatActivity {
     public void setPlayer(String player_Id){
         TextView lastName = findViewById(R.id.edit_);
         TextView firstName = findViewById(R.id.edit_firstname);
-        Spinner groupName = findViewById(R.id.spinner);
+        Spinner groupName = findViewById(R.id.block);
 
         helper = new DatabaseHelper(this);
 
@@ -74,8 +74,6 @@ public class PlayerEditActivity extends AppCompatActivity {
 
         lastName.setText(cursor.getString(0));
         firstName.setText(cursor.getString(1));
-
-
 
     }
 
@@ -106,7 +104,7 @@ public class PlayerEditActivity extends AppCompatActivity {
     public void updatePlayer(String player_Id){
         TextView lastName = findViewById(R.id.edit_);
         TextView firstName = findViewById(R.id.edit_firstname);
-        Spinner groupName = findViewById(R.id.spinner);
+        Spinner groupName = findViewById(R.id.block);
 
         String last = String.valueOf(lastName.getText());
         String first = String.valueOf(firstName.getText());
@@ -137,7 +135,6 @@ public class PlayerEditActivity extends AppCompatActivity {
             onPostExecute("選手情報の更新が完了しました");
 
         }
-
 
     }
 
