@@ -76,6 +76,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public DatabaseHelper(TournamentEdit context) {
+        super(context, DB_NAME, null, DATABASE_VERSION);
+        mContext = context;
+        mDatabasePath = mContext.getDatabasePath(DB_NAME);
+
+    }
+
     /**
      * asset に格納したデータベースをコピーするための空のデータベースを作成する
      */
@@ -99,6 +106,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 try {
                     checkDb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE);
                 } catch (SQLiteException e) {
+
                 }
 
                 if (checkDb != null) {
