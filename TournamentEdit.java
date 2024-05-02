@@ -81,10 +81,13 @@ public class TournamentEdit extends AppCompatActivity {
 
     }
 
+
+
+
+
     protected void onPostExecute(Object obj) {
         //画面にメッセージを表示する
         Toast.makeText(TournamentEdit.this,(String)obj,Toast.LENGTH_LONG).show();
     }
-
 
 }

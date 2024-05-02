@@ -19,9 +19,9 @@ public class ManagementActivity extends AppCompatActivity {
         Button entry = findViewById(R.id.entry);
         Button list = findViewById(R.id.list);
         Button t_edit = findViewById(R.id.tournament_edit);
+        Button t_view = findViewById(R.id.tournament_view);
 
         entry.setOnClickListener((View v) -> {
-            //startActivity(new Intent(this, PlayerEntryActivity.class));
             startActivity(new Intent(this, PlayerEntryActivity.class));
         });
 
@@ -31,6 +31,10 @@ public class ManagementActivity extends AppCompatActivity {
 
         t_edit.setOnClickListener((View v) -> {
             startActivity(new Intent(this, TournamentEdit.class));
+        });
+
+        t_view.setOnClickListener((View v) -> {
+            startActivity(new Intent(this, TournamentCreate.class));
         });
 
     }
