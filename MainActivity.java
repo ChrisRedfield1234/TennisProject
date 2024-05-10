@@ -86,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
 
         while (cursor.moveToNext()) {
             m_dto.setMatch_Id(cursor.getString(0));
-            m_dto.setOpponents1(cursor.getString(1));
-            m_dto.setOpponents2(cursor.getString(2));
-            m_dto.setC_Umpire_Id(cursor.getString(4));
+            m_dto.setTournament_Id(cursor.getString(1));
+            m_dto.setOpponents1(cursor.getString(2));
+            m_dto.setOpponents2(cursor.getString(3));
             m_dto.setUmpire_Id(cursor.getString(5));
             m_dto.setCourt_Id(cursor.getString(6));
             m_dto.setDoubles_Flag(cursor.getString(7));

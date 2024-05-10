@@ -3,10 +3,10 @@ package com.example.tennisproject;
 public class MATCH_DTO {
 
     private String match_Id;
+    private String tournament_Id;
     private String opponents1;
     private String opponents2;
     private String v_Opponents;
-    private String c_Umpire_Id;
     private String umpire_Id;
     private String court_Id;
     private String doubles_Flag;
@@ -19,6 +19,14 @@ public class MATCH_DTO {
 
     public void setMatch_Id(String match_Id) {
         this.match_Id = match_Id;
+    }
+
+    public String getTournament_Id(){
+        return tournament_Id;
+    }
+
+    public void setTournament_Id(String tournament_Id) {
+        this.tournament_Id = tournament_Id;
     }
 
     public String getOpponents1() {
@@ -43,14 +51,6 @@ public class MATCH_DTO {
 
     public void setV_Opponents(String v_Opponents) {
         this.v_Opponents = v_Opponents;
-    }
-
-    public String getC_Umpire_Id() {
-        return c_Umpire_Id;
-    }
-
-    public void setC_Umpire_Id(String c_Umpire_Id) {
-        this.c_Umpire_Id = c_Umpire_Id;
     }
 
     public String getUmpire_Id() {

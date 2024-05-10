@@ -9,7 +9,7 @@
         android:id="@+id/textView29"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="トーナメント管理"
+        android:text="大会管理"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.459"
@@ -47,6 +47,20 @@
         app:layout_constraintVertical_bias="0.607" />
 
     <Button
+        android:id="@+id/tournament_entry"
+        android:layout_width="254dp"
+        android:layout_height="97dp"
+        android:onClick="showDialog"
+        android:text="トーナメント登録"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.284"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.816" />
+
+    <Button
         android:id="@+id/tournament_view"
         android:layout_width="254dp"
         android:layout_height="97dp"
@@ -54,7 +68,7 @@
         android:text="トーナメント表示"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.645"
+        app:layout_constraintHorizontal_bias="0.638"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -62,8 +76,8 @@
 
     <Button
         android:id="@+id/list"
-        android:layout_width="242dp"
-        android:layout_height="93dp"
+        android:layout_width="254dp"
+        android:layout_height="97dp"
         android:onClick="showDialog"
         android:text="選手一覧"
         android:textSize="30dp"

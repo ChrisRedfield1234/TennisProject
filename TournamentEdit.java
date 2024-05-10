@@ -72,9 +72,43 @@ public class TournamentEdit extends AppCompatActivity {
 
             SQLiteDatabase db = helper.getWritableDatabase();
 
-            String sql = "UPDATE TOURNAMENT_INFO_TBL SET PARTICIPANTS = ?,BLOCK = ? WHERE TOURNAMENT_INFO_ID = '1'";
+            String sql1 = "UPDATE TOURNAMENT_INFO_TBL SET PARTICIPANTS = ?,BLOCK = ? WHERE TOURNAMENT_INFO_ID = '1'";
 
-            db.execSQL(sql, new String[]{par,block});
+            db.execSQL(sql1, new String[]{par,block});
+
+            String sql2 = "DELETE FROM MATCH_TBL;";
+
+            db.execSQL(sql2);
+
+            int j = 1;
+            String p = "";
+            String b = "";
+
+            for(int i = 1;i <= Integer.parseInt(par);i++){
+
+                if(i > (Integer.parseInt(par) / Integer.parseInt(block)) * j){
+                    j++;
+                }
+
+                if(i < 10){
+                    p = "00" + String.valueOf(i);
+                }else if(i >= 10){
+                    p = "0" + String.valueOf(i);
+                }else{
+                    p = String.valueOf(i);
+                }
+
+                if(j < 10){
+                    b = "0" + String.valueOf(j);
+                }else{
+                    b = String.valueOf(j);
+                }
+
+                String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,0,0,0,1,1,0,null,null);";
+
+                db.execSQL(sql3, new String[]{p,b});
+
+            }
 
             onPostExecute("トーナメント情報の保存が完了しました");
         }

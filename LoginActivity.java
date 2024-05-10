@@ -35,16 +35,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-
-
         Button loginbtn = findViewById(R.id.loginbtn);
 
         loginbtn.setOnClickListener((View v) -> {
             checkUser();
 
         });
-
-
 
     }
 
