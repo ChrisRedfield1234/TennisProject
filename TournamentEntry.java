@@ -26,6 +26,8 @@ public class TournamentEntry extends AppCompatActivity {
     private DatabaseHelper helper;
     private ArrayList<MatchList_DTO> matchList = new ArrayList<MatchList_DTO>();
 
+    private int int_block;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,11 +37,25 @@ public class TournamentEntry extends AppCompatActivity {
         Button returnbtn = findViewById(R.id.returnbtn);
         Button editbtn1 = findViewById(R.id.edit1);
         Button editbtn2 = findViewById(R.id.edit2);
+        Button next = findViewById(R.id.next);
+        Button assign = findViewById(R.id.assign);
 
         AtomicBoolean edit_Flag1 = new AtomicBoolean(false);
         AtomicBoolean edit_Flag2 = new AtomicBoolean(false);
+        AtomicBoolean assign_Flag = new AtomicBoolean(false);
 
-        List<Map<String, String>> tournament_List = selectPlayer();
+        String t_block= "";
+
+        //ブロックのデータ受け取り用
+        Intent tournament = getIntent();
+
+        if(tournament.getStringExtra("TOURNAMENT_DATA") != null){
+            t_block = tournament.getStringExtra("TOURNAMENT_DATA");
+        }else{
+            t_block= "A";
+        }
+
+        List<Map<String, String>> tournament_List = selectPlayer(t_block);
 
         SimpleAdapter androidVersionListAdapter = new SimpleAdapter(
                 getApplicationContext(),
@@ -56,6 +72,8 @@ public class TournamentEntry extends AppCompatActivity {
                 edit_Flag1.set(true);
                 editbtn2.setBackgroundColor(Color.BLUE);
                 edit_Flag2.set(false);
+                assign.setBackgroundColor(Color.BLUE);
+                assign_Flag.set(false);
 
             }else if(edit_Flag1.get()){
                 editbtn1.setBackgroundColor(Color.BLUE);
@@ -71,6 +89,8 @@ public class TournamentEntry extends AppCompatActivity {
                 edit_Flag2.set(true);
                 editbtn1.setBackgroundColor(Color.BLUE);
                 edit_Flag1.set(false);
+                assign.setBackgroundColor(Color.BLUE);
+                assign_Flag.set(false);
 
             } else if (edit_Flag2.get()) {
 
@@ -80,8 +100,35 @@ public class TournamentEntry extends AppCompatActivity {
             }
         });
 
+        assign.setOnClickListener((View v) -> {
+            if(!assign_Flag.get()){
+                assign.setBackgroundColor(Color.RED);
+                assign_Flag.set(true);
+                editbtn1.setBackgroundColor(Color.BLUE);
+                edit_Flag1.set(false);
+                editbtn2.setBackgroundColor(Color.BLUE);
+                edit_Flag2.set(false);
+
+            }else if(assign_Flag.get()){
+
+                assign.setBackgroundColor(Color.BLUE);
+                assign_Flag.set(false);
+
+            }
+
+        });
+
         returnbtn.setOnClickListener((View v) -> {
             startActivity(new Intent(this, ManagementActivity.class));
+        });
+
+
+        String finalT_block = t_block;
+
+        next.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, TournamentEntry.class);
+            intent.putExtra("TOURNAMENT_DATA", jumpTournament(finalT_block,false));
+            startActivity(intent);
         });
 
             ListView listView = findViewById(R.id.tournament_list);
@@ -89,21 +136,27 @@ public class TournamentEntry extends AppCompatActivity {
             listView.setAdapter(androidVersionListAdapter);
 
         //遷移先のアクティビティーを指定
-        Intent intent = new Intent(this, TournamentEntryList.class);
+        Intent list = new Intent(this, TournamentEntryList.class);
+        Intent assing = new Intent(this, MatchAssign.class);
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Map<String, String> itemMap = (Map<String, String>) listView.getItemAtPosition(position);
-                    String player_Id = "";
+                    String match_Id = "";
                     String player[] = {};
                     if(edit_Flag1.get()){
                         player = new String[]{itemMap.get("試合番号"), "1"};
-                        intent.putExtra("EXTRA_DATA",player);
-                        startActivity(intent);
+                        list.putExtra("EXTRA_DATA",player);
+                        startActivity(list);
                     }else if(edit_Flag2.get()){
                         player = new String[]{itemMap.get("試合番号"), "2"};
-                        intent.putExtra("EXTRA_DATA",player);
-                        startActivity(intent);
+                        list.putExtra("EXTRA_DATA",player);
+                        startActivity(list);
+                    }else if(assign_Flag.get()){
+                        match_Id = itemMap.get("試合番号");
+                        assing.putExtra("EXTRA_DATA",match_Id);
+                        startActivity(assing);
                     }
 
                 }
@@ -112,7 +165,7 @@ public class TournamentEntry extends AppCompatActivity {
 
         }
 
-        public List<Map<String, String>> selectPlayer(){
+        public List<Map<String, String>> selectPlayer(String t_block){
 
             helper = new DatabaseHelper(this);
 
@@ -126,9 +179,9 @@ public class TournamentEntry extends AppCompatActivity {
             SQLiteDatabase db = helper.getReadableDatabase();
 
             //String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID;";
-            String sql1 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL;";
+            String sql1 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL WHERE TOURNAMENT_ID = ?";
 
-            Cursor cursor1 = db.rawQuery(sql1, null);
+            Cursor cursor1 = db.rawQuery(sql1, new String[]{t_block});
 
             while(cursor1.moveToNext()){
                 MatchList_DTO dto = new MatchList_DTO();
@@ -166,8 +219,8 @@ public class TournamentEntry extends AppCompatActivity {
                 PLAYER_DTO p_dto2 = new PLAYER_DTO();
 
                 if(cursor3.getCount() != 0){
-                    p_dto2.setLastName(cursor2.getString(0));
-                    p_dto2.setFirstName(cursor2.getString(1));
+                    p_dto2.setLastName(cursor3.getString(0));
+                    p_dto2.setFirstName(cursor3.getString(1));
                 }else{
                     p_dto2.setLastName("");
                     p_dto2.setFirstName("");
@@ -177,19 +230,9 @@ public class TournamentEntry extends AppCompatActivity {
 
             }
 
-            String sql3 = "SELECT * FROM TOURNAMENT_INFO_TBL;";
-
-            Cursor cursor3 = db.rawQuery(sql3, null);
-
-            cursor3.moveToNext();
-            int participants = Integer.parseInt(cursor3.getString(1));
-            int block = Integer.parseInt(cursor3.getString(2));
-            //入れる数字は１ブロックのプレイヤー数
-            //空白でも""とか入れる、新規入力できるように
-            return getMatch(participants);
+            return getMatch(cursor1.getCount());
 
         }
-
 
         public List<Map<String, String>> getMatch(int length){
 
@@ -237,5 +280,56 @@ public class TournamentEntry extends AppCompatActivity {
             return list;
 
         }
+
+        public String jumpTournament(String block,boolean flag){
+
+            helper = new DatabaseHelper(this);
+
+            try {
+                helper.createDatabase();
+            } catch (
+                    IOException e) {
+                throw new Error("Unable to create database");
+            }
+
+            SQLiteDatabase db = helper.getReadableDatabase();
+
+            String sql = "SELECT * FROM TOURNAMENT_INFO_TBL;";
+
+            Cursor cursor = db.rawQuery(sql, null);
+
+            cursor.moveToNext();
+            int participants = Integer.parseInt(cursor.getString(1));
+            int_block = Integer.parseInt(cursor.getString(2));
+
+            if(block.equals("A") && int_block >= 2){
+
+                block = "B";
+
+            }else if(block.equals("B") && int_block == 2){
+
+                block = "A";
+
+            }else if(block.equals("B") && int_block >= 3) {
+
+                block = "C";
+
+            }else if(block.equals("C") && int_block == 3){
+
+                block = "A";
+
+            }else if(block.equals("C") && int_block >= 4){
+
+                block = "D";
+
+            }else if(block.equals("D")){
+
+                block = "A";
+
+            }
+
+            return block;
+        }
+
 
     }

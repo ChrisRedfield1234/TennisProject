@@ -40,5 +40,6 @@
         <activity android:name=".TournamentCreate"/>
         <activity android:name=".TournamentEntry"/>
         <activity android:name=".TournamentEntryList"/>
+        <activity android:name=".MatchAssign"/>
     </application>
 </manifest>

@@ -98,10 +98,14 @@ public class TournamentEdit extends AppCompatActivity {
                     p = String.valueOf(i);
                 }
 
-                if(j < 10){
-                    b = "0" + String.valueOf(j);
-                }else{
-                    b = String.valueOf(j);
+                if(j == 1){
+                    b = "A";
+                }else if(j == 2){
+                    b = "B";
+                }else if(j == 3){
+                    b = "C";
+                }else if(j == 4){
+                    b = "D";
                 }
 
                 String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,0,0,0,1,1,0,null,null);";

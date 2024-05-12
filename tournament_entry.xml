@@ -33,13 +33,39 @@
         app:layout_constraintVertical_bias="0.951" />
 
     <Button
+        android:id="@+id/next"
+        android:layout_width="79dp"
+        android:layout_height="81dp"
+        android:text="⇒"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.974"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.948" />
+
+    <Button
         android:id="@+id/edit2"
         android:layout_width="150dp"
         android:layout_height="81dp"
         android:text="編集"
         android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.40"
+        app:layout_constraintHorizontal_bias="0.412"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.951" />
+
+    <Button
+        android:id="@+id/assign"
+        android:layout_width="150dp"
+        android:layout_height="81dp"
+        android:text="試合割当"
+        android:textSize="27sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.612"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -51,5 +77,6 @@
         android:layout_height="match_parent" >
 
     </ListView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

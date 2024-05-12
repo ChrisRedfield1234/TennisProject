@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -31,6 +32,12 @@ public class TournamentEntryList extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         List<Map<String, String>> androidVersionList = selectPlayer();
+
+        Button returnbtn = findViewById(R.id.returnbtn);
+
+        returnbtn.setOnClickListener((View v) -> {
+            startActivity(new Intent(this, TournamentEntry.class));
+        });
 
         SimpleAdapter androidVersionListAdapter = new SimpleAdapter(
                 getApplicationContext(),
