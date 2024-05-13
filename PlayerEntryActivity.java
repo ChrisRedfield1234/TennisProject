@@ -50,6 +50,7 @@ public class PlayerEntryActivity extends AppCompatActivity {
         EditText firstname = findViewById(R.id.edit_firstname);
         Spinner spinner = findViewById(R.id.block);
 
+        String player_Id  = "";
         String last = String.valueOf(lastname.getText());
         String first = String.valueOf(firstname.getText());
         String gp = String.valueOf(spinner.getSelectedItem());
@@ -72,13 +73,39 @@ public class PlayerEntryActivity extends AppCompatActivity {
             SQLiteDatabase db = helper.getWritableDatabase();
 
             String sql1 = "SELECT GROUP_ID FROM GROUP_TBL WHERE GROUP_NAME = ?;";
-            String sql2 = "INSERT INTO PLAYER_TBL(GROUP_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME) VALUES(?,?,?);";
+            String sql2 = "SELECT MIN(PLAYER_ID) FROM PLAYER_TBL WHERE PLAYER_LAST_NAME = '0';";
+            String sql3 = "UPDATE PLAYER_TBL SET GROUP_ID = ?,PLAYER_LAST_NAME = ?,PLAYER_FIRST_NAME = ? WHERE PLAYER_ID = ?;";
 
             Cursor cursor = db.rawQuery(sql1, new String[]{gp});
             cursor.moveToNext();
             String gn = cursor.getString(0);
+            Cursor cursor2 = db.rawQuery(sql2, null);
+            cursor2.moveToNext();
 
-            db.execSQL(sql2, new String[]{gn,last,first});
+            if(cursor2.getString(0) != null){
+
+                if(Integer.parseInt((cursor2.getString(0))) < 10){
+
+                    player_Id = "00" + String.valueOf(Integer.parseInt((cursor2.getString(0))));
+
+                }else if(Integer.parseInt((cursor2.getString(0))) < 100){
+
+                    player_Id = "0" + String.valueOf(Integer.parseInt((cursor2.getString(0))));
+
+                }else{
+
+                    player_Id = String.valueOf(Integer.parseInt((cursor2.getString(0))));
+
+                }
+            }else {
+
+                player_Id = "01";
+
+            }
+
+            System.out.println(player_Id);
+
+            db.execSQL(sql3, new String[]{gn,last,first,player_Id});
 
             onPostExecute("選手登録が完了しました");
 

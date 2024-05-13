@@ -158,10 +158,8 @@ public class TournamentEntry extends AppCompatActivity {
                         assing.putExtra("EXTRA_DATA",match_Id);
                         startActivity(assing);
                     }
-
                 }
             });
-
 
         }
 
