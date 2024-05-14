@@ -18,15 +18,6 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
 
-
-    String userbox ="";
-    String passbox ="";
-
-    String Auserbox ="";
-    String Apassbox ="";
-
-
-
     private DatabaseHelper helper;
 
     @Override
@@ -39,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginbtn.setOnClickListener((View v) -> {
             checkUser();
-
         });
 
     }
@@ -51,18 +41,10 @@ public class LoginActivity extends AppCompatActivity {
         EditText user = findViewById(R.id.user);
         EditText password = findViewById(R.id.password);
 
-        String sqlUser = "select * from USER_TBL";
-        //String sqlUser = "select USER_NAME from USER_TBL where USER_ID = 02";
-
-        String sqlPass = "select PASSWORD from USER_TBL where USER_ID = '02'";
-        //String sqlUser = "select COURT_NAME from COURT_TBL where COURT_ID = 1";
-        //String sqlPass = "select COURT_ID from COURT_TBL where COURT_NAME = 'Aコート'";
-
-        String AsqlUser = "select USER_NAME from USER_TBL where USER_ID = 01";
-        String AsqlPass = "select PASSWORD from USER_TBL where USER_ID = 01";
-        //String AsqlUser = "select COURT_NAME from COURT_TBL where COURT_ID = 2";
-        //String AsqlPass = "select COURT_ID from COURT_TBL where COURT_NAME = 'Bコート'";
-
+        String user_Name = user.getText().toString();
+        String user_Password = password.getText().toString();
+        
+        System.out.println(user_Name + user_Password);
 
         try {
             helper.createDatabase();
@@ -73,68 +55,31 @@ public class LoginActivity extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-
-
-
-        //String sql = "select COUNT(*) from SERVER_TBL;";
-
-
         try {
 
-            String usertest = user.getText().toString();
-            String passtest = password.getText().toString();
+            String sql = "select PERMISSION from USER_TBL where USER_NAME = ? AND PASSWORD = ?;";
 
-            String Ausertest = user.getText().toString();
-            String Apasstest = password.getText().toString();
+            Cursor cursor = db.rawQuery(sql, new String[]{user_Name,user_Password});
 
-            Cursor cursor1 = db.rawQuery(sqlUser, null);
-            Cursor cursor2 = db.rawQuery(sqlPass, null);
-            Cursor cursor3 = db.rawQuery(AsqlUser, null);
-            Cursor cursor4 = db.rawQuery(AsqlPass, null);
+            cursor.moveToNext();
 
+            if(cursor.getCount() == 0){
 
+                onPostExecute("資格情報が無効です");
 
-            while (cursor1.moveToNext()) {
-                userbox = cursor1.getString(0);
+            }else if(cursor.getString(0).equals("管理者")){
+
+                startActivity(new Intent(this, ManagementActivity.class));
+
+            }else if(cursor.getString(0).equals("ユーザー")){
+
+                startActivity(new Intent(this, ManagementActivity.class));
+
             }
-
-            while (cursor2.moveToNext()) {
-                passbox = cursor2.getString(0);
-            }
-            while (cursor3.moveToNext()) {
-                Auserbox = cursor3.getString(0);
-            }
-
-            while (cursor4.moveToNext()) {
-                Apassbox = cursor4.getString(0);
-            }
-
-            System.out.println("0" + userbox);
-            System.out.println("1" + passbox);
-            System.out.println("2" + Auserbox);
-            System.out.println("3" + Apassbox);
-
-
-                if ((usertest.equals(userbox)&&passtest.equals(passbox))||(Ausertest.equals(Auserbox)&&Apasstest.equals(Apassbox))) {
-//
-
-                    //onPostExecute("OK");
-                    startActivity(new Intent(this, MainActivity.class));
-
-
-                } else {
-                    onPostExecute("資格情報が無効です");
-
-                }
 
         }finally {
             db.close();
         }
-
-
-        //onPostExecute("資格情報が無効です");
-
-
 
     }
 

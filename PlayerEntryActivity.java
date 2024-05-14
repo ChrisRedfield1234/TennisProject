@@ -97,6 +97,7 @@ public class PlayerEntryActivity extends AppCompatActivity {
                     player_Id = String.valueOf(Integer.parseInt((cursor2.getString(0))));
 
                 }
+
             }else {
 
                 player_Id = "01";

@@ -28,6 +28,8 @@ public class TournamentEntry extends AppCompatActivity {
 
     private int int_block;
 
+    private String participants;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +45,8 @@ public class TournamentEntry extends AppCompatActivity {
         AtomicBoolean edit_Flag1 = new AtomicBoolean(false);
         AtomicBoolean edit_Flag2 = new AtomicBoolean(false);
         AtomicBoolean assign_Flag = new AtomicBoolean(false);
+
+        selectTournamentInfo();
 
         String t_block= "";
 
@@ -146,11 +150,11 @@ public class TournamentEntry extends AppCompatActivity {
                     String match_Id = "";
                     String player[] = {};
                     if(edit_Flag1.get()){
-                        player = new String[]{itemMap.get("試合番号"), "1"};
+                        player = new String[]{itemMap.get("試合番号"), "1",participants};
                         list.putExtra("EXTRA_DATA",player);
                         startActivity(list);
                     }else if(edit_Flag2.get()){
-                        player = new String[]{itemMap.get("試合番号"), "2"};
+                        player = new String[]{itemMap.get("試合番号"), "2",participants};
                         list.putExtra("EXTRA_DATA",player);
                         startActivity(list);
                     }else if(assign_Flag.get()){
@@ -279,7 +283,7 @@ public class TournamentEntry extends AppCompatActivity {
 
         }
 
-        public String jumpTournament(String block,boolean flag){
+        public void selectTournamentInfo(){
 
             helper = new DatabaseHelper(this);
 
@@ -297,8 +301,12 @@ public class TournamentEntry extends AppCompatActivity {
             Cursor cursor = db.rawQuery(sql, null);
 
             cursor.moveToNext();
-            int participants = Integer.parseInt(cursor.getString(1));
+            participants = cursor.getString(1);
             int_block = Integer.parseInt(cursor.getString(2));
+
+        }
+
+        public String jumpTournament(String block,boolean flag){
 
             if(block.equals("A") && int_block >= 2){
 

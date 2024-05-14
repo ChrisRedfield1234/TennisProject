@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,8 @@ import java.util.Map;
 public class TournamentEntryList extends AppCompatActivity {
 
     private DatabaseHelper helper;
+
+    private int max;
 
     private ArrayList<PlayerList_DTO> playerList = new ArrayList<PlayerList_DTO>();
 
@@ -61,7 +64,6 @@ public class TournamentEntryList extends AppCompatActivity {
                 String player_Id = itemMap.get("プレイヤーID");
                 String match[] = intent2.getStringArrayExtra("EXTRA_DATA");
 
-                System.out.println("中身" + match[0]);
                 //DB更新処理
                 updateMatch(player_Id,match);
 
@@ -86,7 +88,9 @@ public class TournamentEntryList extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID;";
+        String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL " +
+                "INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID " +
+                "WHERE PLAYER_ID <> (SELECT OPPONENTS1_ID FROM MATCH_TBL) AND PLAYER_ID <> (SELECT OPPONENTS2_ID FROM MATCH_TBL);\n";
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -157,20 +161,33 @@ public class TournamentEntryList extends AppCompatActivity {
 
         String sql = "";
 
-        if(match[1].equals("1")){
+        if(Integer.parseInt(match[0]) > Integer.parseInt(match[2]) / 2){
 
-            sql ="UPDATE MATCH_TBL SET OPPONENTS1_ID = ? WHERE MATCH_ID = ?;";
+            onPostExecute("この試合は編集できません");
 
-        }else if(match[1].equals("2")){
+        }else{
 
-            sql ="UPDATE MATCH_TBL SET OPPONENTS2_ID = ? WHERE MATCH_ID = ?;";
+            if(match[1].equals("1")){
+
+                sql ="UPDATE MATCH_TBL SET OPPONENTS1_ID = ? WHERE MATCH_ID = ?;";
+
+            }else if(match[1].equals("2")){
+
+                sql ="UPDATE MATCH_TBL SET OPPONENTS2_ID = ? WHERE MATCH_ID = ?;";
+
+            }
+
+            //試合IDに一致した行の対戦IDを更新
+            db.execSQL(sql, new String[]{player_Id,match[0]});
 
         }
 
-        //試合IDに一致した行の対戦IDを更新
-        db.execSQL(sql, new String[]{player_Id,match[0]});
 
+    }
 
+    protected void onPostExecute(Object obj) {
+        //画面にメッセージを表示する
+        Toast.makeText(TournamentEntryList.this,(String)obj,Toast.LENGTH_LONG).show();
     }
 
 }
