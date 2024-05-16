@@ -647,6 +647,7 @@ public class CountActivity extends AppCompatActivity {
                 s_flag = player_Id1;
             }
         }
+
         if(s_flag.equals(player_Id1)){
             if(name1.getText().equals(player_Last_Name1 + player_First_Name1)){
                 s_Mark1.setText("▶");

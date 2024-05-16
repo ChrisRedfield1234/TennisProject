@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         mDatabasePath = mContext.getDatabasePath(DB_NAME);
 
     }
-    public DatabaseHelper(tossActivity context) {
+    public DatabaseHelper(TossActivity context) {
         super(context, DB_NAME, null, DATABASE_VERSION);
         mContext = context;
         mDatabasePath = mContext.getDatabasePath(DB_NAME);
@@ -105,6 +105,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public DatabaseHelper(MatchAssign context) {
+        super(context, DB_NAME, null, DATABASE_VERSION);
+        mContext = context;
+        mDatabasePath = mContext.getDatabasePath(DB_NAME);
+
+    }
+
+    public DatabaseHelper(Umpire_Main context) {
         super(context, DB_NAME, null, DATABASE_VERSION);
         mContext = context;
         mDatabasePath = mContext.getDatabasePath(DB_NAME);

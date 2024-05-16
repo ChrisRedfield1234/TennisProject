@@ -1,4 +1,10 @@
 package com.example.tennisproject;
+import static com.example.tennisproject.MainActivity.player_First_Name1;
+import static com.example.tennisproject.MainActivity.player_First_Name2;
+import static com.example.tennisproject.MainActivity.player_Id1;
+import static com.example.tennisproject.MainActivity.player_Id2;
+import static com.example.tennisproject.MainActivity.player_Last_Name1;
+import static com.example.tennisproject.MainActivity.player_Last_Name2;
 import static java.util.Objects.isNull;
 
 import android.content.Intent;
@@ -89,6 +95,7 @@ public class ExportActivity extends AppCompatActivity {
             showDialog(v);
         });
 
+        setName();
 
         helper = new DatabaseHelper(this);
         try {
@@ -103,8 +110,8 @@ public class ExportActivity extends AppCompatActivity {
         String sql1 ="select * from POINT_TBL";
         String sql2 ="select * from SERVER_TBL";
         String sql3 ="select * from SIDE_TBL";
-        String sql4 ="select COUNT(*) from GAME_TBL WHERE V_OPPONENTS_ID = 1";
-        String sql5 ="select COUNT(*) from GAME_TBL WHERE V_OPPONENTS_ID = 2";
+        String sql4 ="select COUNT(*) from GAME_TBL WHERE V_OPPONENTS_ID = ?";
+        String sql5 ="select COUNT(*) from GAME_TBL WHERE V_OPPONENTS_ID = ?";
         //String sql6 ="select PLAYER_LAST_NAME || ' ' || PLAYER_FIRST_NAME from PLAYER_TBL where PLAYER_ID = 1";
         //String sql7 ="select PLAYER_LAST_NAME || ' ' || PLAYER_FIRST_NAME from PLAYER_TBL where PLAYER_ID = 2";
 
@@ -112,8 +119,8 @@ public class ExportActivity extends AppCompatActivity {
             Cursor cursor1 = db.rawQuery(sql1, null);
             Cursor cursor2 = db.rawQuery(sql2, null);
             Cursor cursor3 = db.rawQuery(sql3, null);
-            Cursor cursor4 = db.rawQuery(sql4, null);
-            Cursor cursor5 = db.rawQuery(sql5, null);
+            Cursor cursor4 = db.rawQuery(sql4, new String[]{player_Id1});
+            Cursor cursor5 = db.rawQuery(sql5, new String[]{player_Id2});
            // Cursor cursor6 = db.rawQuery(sql6, null);
             //Cursor cursor7 = db.rawQuery(sql7, null);
 
@@ -213,15 +220,9 @@ public class ExportActivity extends AppCompatActivity {
 
             TextView setScore2 = findViewById(R.id.SetScore2);
 
-
-
            if(pointB.equals("5")&&(!(pointA.equals("6")))||pointB.equals("6")) {
                 setScore2.setText("1");
             }
-
-
-
-
 
         } finally {
             db.close();
@@ -289,8 +290,6 @@ public class ExportActivity extends AppCompatActivity {
 
                         }
                     }
-
-
 
                 }else if(dto.getToss_Winner().equals("2")){
 
@@ -474,6 +473,15 @@ public class ExportActivity extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setName(){
+        TextView player1 = (TextView)findViewById(R.id.player1);
+        TextView player2 = (TextView)findViewById(R.id.player2);
+
+        player1.setText(player_Last_Name1 + player_First_Name1);
+        player2.setText(player_Last_Name2 + player_First_Name2);
+
     }
 
 /*

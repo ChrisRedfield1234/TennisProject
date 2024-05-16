@@ -43,8 +43,6 @@ public class LoginActivity extends AppCompatActivity {
 
         String user_Name = user.getText().toString();
         String user_Password = password.getText().toString();
-        
-        System.out.println(user_Name + user_Password);
 
         try {
             helper.createDatabase();
@@ -55,9 +53,11 @@ public class LoginActivity extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
+        Intent umpire = new Intent(this, Umpire_Main.class);
+
         try {
 
-            String sql = "select PERMISSION from USER_TBL where USER_NAME = ? AND PASSWORD = ?;";
+            String sql = "select USER_ID,PERMISSION from USER_TBL where USER_NAME = ? AND PASSWORD = ?;";
 
             Cursor cursor = db.rawQuery(sql, new String[]{user_Name,user_Password});
 
@@ -67,13 +67,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 onPostExecute("資格情報が無効です");
 
-            }else if(cursor.getString(0).equals("管理者")){
+            }else if(cursor.getString(1).equals("管理者")){
 
                 startActivity(new Intent(this, ManagementActivity.class));
 
-            }else if(cursor.getString(0).equals("ユーザー")){
+            }else if(cursor.getString(1).equals("ユーザー")){
 
-                startActivity(new Intent(this, ManagementActivity.class));
+                umpire.putExtra("EXTRA_DATA",cursor.getString(0));
+                startActivity(umpire);
 
             }
 

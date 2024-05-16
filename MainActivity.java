@@ -8,14 +8,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,27 +35,40 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         helper = new DatabaseHelper(this);
-        resetDB();
-        selectMatch();
+
+        Button startbtn = findViewById(R.id.start);
+        Button reset = findViewById(R.id.reset);
+
+        Intent tournament = getIntent();
+
+        String match_Id = tournament.getStringExtra("EXTRA_DATA");
+
+        selectMatch(match_Id);
         selectPlayername();
         setName();
 
-        Button startbtn = findViewById(R.id.start);
+        Intent intent = new Intent(this, TossActivity.class);
+
         startbtn.setOnClickListener((View v) -> {
-            //DB();
-            startActivity(new Intent(this, tossActivity.class));
+
+            intent.putExtra("EXTRA_DATA",new String[]{player_Id1,player_Id2});
+            startActivity(intent);
+
         });
+
+        reset.setOnClickListener((View v) -> {
+
+            resetDB();
+
+        });
+
 
         Button dialogbtn = findViewById(R.id.dialog);
         dialogbtn.setOnClickListener((View v) -> {
 
             showDialog(v);
-        });
 
-        //ブラウザ起動処理
-        //Uri uri = Uri.parse("https://www.elecs-web.co.jp/");
-        //Intent i = new Intent(Intent.ACTION_VIEW,uri);
-        //startActivity(i);
+        });
 
     }
 
@@ -67,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void selectMatch(){
+    public void selectMatch(String match_Id){
         try {
             helper.createDatabase();
         } catch (
@@ -77,22 +88,17 @@ public class MainActivity extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        //String sql1 = "UPDATE MATCH_TBL SET START_TIME = CURRENT_TIMESTAMP WHERE MATCH_ID = 2;";
-        //String sql2 = "SELECT * FROM MATCH_TBL WHERE MATCH_ID = 2;";
-        String sql1 = "UPDATE MATCH_TBL SET START_TIME = CURRENT_TIMESTAMP WHERE MATCH_ID = 1;";
-        String sql2 = "SELECT * FROM MATCH_TBL WHERE MATCH_ID = 1;";
-        db.execSQL(sql1);
-        Cursor cursor = db.rawQuery(sql2, null);
+        String sql1 = "UPDATE MATCH_TBL SET START_TIME = CURRENT_TIMESTAMP WHERE MATCH_ID = ?;";
+        String sql2 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID,UMPIRE_ID FROM MATCH_TBL WHERE MATCH_ID = ?;";
+        db.execSQL(sql1,new String[]{match_Id});
+        Cursor cursor = db.rawQuery(sql2, new String[]{match_Id});
 
         while (cursor.moveToNext()) {
             m_dto.setMatch_Id(cursor.getString(0));
             m_dto.setTournament_Id(cursor.getString(1));
             m_dto.setOpponents1(cursor.getString(2));
             m_dto.setOpponents2(cursor.getString(3));
-            m_dto.setUmpire_Id(cursor.getString(5));
-            m_dto.setCourt_Id(cursor.getString(6));
-            m_dto.setDoubles_Flag(cursor.getString(7));
-            m_dto.setStart_Time(cursor.getString(8));
+            m_dto.setUmpire_Id(cursor.getString(4));
         }
 
     }
@@ -108,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = helper.getWritableDatabase();
         player_Id1 = m_dto.getOpponents1();
         player_Id2 = m_dto.getOpponents2();
-        String sql = "SELECT PLAYER_LAST_NAME,PLAYER_FIRST_NAME FROM PLAYER_TBL WHERE PLAYER_ID IN (" + player_Id1 +","+ player_Id2 +");";
+        String sql = "SELECT PLAYER_LAST_NAME,PLAYER_FIRST_NAME FROM PLAYER_TBL WHERE PLAYER_ID IN (?,?);";
 
-        Cursor cursor = db.rawQuery(sql, null);
+        Cursor cursor = db.rawQuery(sql, new String[]{player_Id1,player_Id2});
 
         while (cursor.moveToNext()) {
             PLAYER_DTO p_dto = new PLAYER_DTO();

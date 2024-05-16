@@ -16,7 +16,7 @@
         tools:targetApi="30">
         <activity
 
-            android:name=".ManagementActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,11 +28,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".tossActivity"/>
+        <activity android:name=".TossActivity"/>
         <activity android:name=".CountActivity"/>
         <activity android:name=".ExportActivity"/>
         <activity android:name=".PlayerEntryActivity"/>
         <activity android:name=".Server_DTO"/>
+        <activity android:name=".ManagementActivity"/>
         <activity android:name=".PlayerManagement"/>
         <activity android:name=".PlayerEditActivity"/>
         <activity android:name=".MainActivity"/>
@@ -41,5 +42,6 @@
         <activity android:name=".TournamentEntry"/>
         <activity android:name=".TournamentEntryList"/>
         <activity android:name=".MatchAssign"/>
+        <activity android:name=".Umpire_Main"/>
     </application>
 </manifest>

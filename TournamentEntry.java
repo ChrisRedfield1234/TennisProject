@@ -158,9 +158,15 @@ public class TournamentEntry extends AppCompatActivity {
                         list.putExtra("EXTRA_DATA",player);
                         startActivity(list);
                     }else if(assign_Flag.get()){
-                        match_Id = itemMap.get("試合番号");
-                        assing.putExtra("EXTRA_DATA",match_Id);
-                        startActivity(assing);
+
+                        if(!itemMap.get("選手ID１").equals("0") || !itemMap.get("選手ID２").equals("0")){
+
+                            match_Id = itemMap.get("試合番号");
+                            assing.putExtra("EXTRA_DATA",match_Id);
+                            startActivity(assing);
+
+                        }
+
                     }
                 }
             });
