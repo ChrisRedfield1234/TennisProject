@@ -312,7 +312,8 @@ public class TournamentEntry extends AppCompatActivity {
 
         }
 
-        public String jumpTournament(String block,boolean flag){
+
+    public String jumpTournament(String block,boolean flag){
 
             if(block.equals("A") && int_block >= 2){
 

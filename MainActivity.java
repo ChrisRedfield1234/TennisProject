@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHelper helper;
     MATCH_DTO m_dto = new MATCH_DTO();
     ArrayList<PLAYER_DTO> playerList = new ArrayList<PLAYER_DTO>();
+    public static String match_Id;
     public static String player_Id1;
     public static String player_Id2;
     public static String player_Last_Name1;
@@ -41,10 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
         Intent tournament = getIntent();
 
-        String match_Id = tournament.getStringExtra("EXTRA_DATA");
+        match_Id = tournament.getStringExtra("EXTRA_DATA");
 
         selectMatch(match_Id);
         selectPlayername();
+        resetDB();
+        insertGame(match_Id);
         setName();
 
         Intent intent = new Intent(this, TossActivity.class);
@@ -152,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         String sql1 = "DELETE FROM POINT_TBL;";
-        String sql2 = "UPDATE GAME_TBL SET V_OPPONENTS_ID = 0, START_TIME = NULL, END_TIME = NULL;";
-        String sql3 = "UPDATE SET_TBL SET V_OPPONENTS_ID = 0, START_TIME = NULL, END_TIME = NULL;";
+        String sql2 = "DELETE FROM GAME_TBL;";
+        String sql3 = "DELETE FROM SET_TBL;";
         String sql4 = "DELETE FROM SERVER_TBL;";
         String sql5 = "DELETE FROM SIDE_TBL;";
 
@@ -166,6 +169,39 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             db.close();
         }
+    }
+
+    public void insertGame(String match_Id){
+
+        try {
+            helper.createDatabase();
+        } catch (
+                IOException e) {
+            throw new Error("Unable to create database");
+        }
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String sql1 = "INSERT INTO SET_TBL VALUES(1,1,0,null,null);";
+
+        db.execSQL(sql1);
+
+        String sql2 = "INSERT INTO GAME_TBL VALUES(?,?,?,'0',null,null);";
+
+        for(int i = 0;i < 14;i++){
+
+            String game_Id = "";
+
+            if(i < 10){
+                game_Id = "0" + String.valueOf(i);
+            }else{
+                game_Id = String.valueOf(i);
+            }
+
+            db.execSQL(sql2,new String[]{match_Id,"1",game_Id});
+
+        }
+
     }
 
 }

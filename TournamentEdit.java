@@ -84,9 +84,9 @@ public class TournamentEdit extends AppCompatActivity {
             String p = "";
             String b = "";
 
-            for(int i = 1;i <= Integer.parseInt(par);i++){
+            for(int i = 1;i <= Integer.parseInt(par)/2;i++){
 
-                if(i > (Integer.parseInt(par) / Integer.parseInt(block)) * j){
+                if(i > ((Integer.parseInt(par) / 2) / Integer.parseInt(block)) * j){
                     j++;
                 }
 
@@ -140,8 +140,6 @@ public class TournamentEdit extends AppCompatActivity {
         }
 
     }
-
-
 
     protected void onPostExecute(Object obj) {
         //画面にメッセージを表示する

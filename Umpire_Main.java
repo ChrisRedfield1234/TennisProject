@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -22,6 +23,8 @@ public class Umpire_Main extends AppCompatActivity {
 
     private DatabaseHelper helper;
 
+    public static String umpire_Id;
+
     private ArrayList<MatchList_DTO> matchList = new ArrayList<MatchList_DTO>();
 
     @Override
@@ -30,13 +33,17 @@ public class Umpire_Main extends AppCompatActivity {
         setContentView(R.layout.umpire_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        String umpire_Id = "";
+        Button returnbtn = findViewById(R.id.returnbtn);
 
         Intent tournament = getIntent();
 
         umpire_Id = tournament.getStringExtra("EXTRA_DATA");
 
         List<Map<String, String>> tournament_List = selectAssignMatch(umpire_Id);
+
+        returnbtn.setOnClickListener((View v) -> {
+            startActivity(new Intent(this, LoginActivity.class));
+        });
 
         SimpleAdapter androidVersionListAdapter = new SimpleAdapter(
                 getApplicationContext(),
@@ -78,7 +85,7 @@ public class Umpire_Main extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sql1 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL WHERE UMPIRE_ID = ?";
+        String sql1 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL WHERE UMPIRE_ID = ? AND V_OPPONENTS_ID = 0";
 
         Cursor cursor1 = db.rawQuery(sql1, new String[]{umpire_Id});
 
