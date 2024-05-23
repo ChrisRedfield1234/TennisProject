@@ -211,7 +211,7 @@ public class ExportActivity extends AppCompatActivity {
         db.execSQL(sql,new String[]{player_Id,match_Id});
 
         db.close();
-        //addMatch(match_Id);
+        addMatch(match_Id);
 
     }
 
@@ -227,7 +227,7 @@ public class ExportActivity extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sql1 = "SELECT * FROM TOURNAMENT_INFO_TBL;";
+        String sql1 = "SELECT PARTICIPANTS,BLOCK FROM TOURNAMENT_INFO_TBL;";
 
         Cursor cursor1 = db.rawQuery(sql1, null);
 
@@ -235,29 +235,33 @@ public class ExportActivity extends AppCompatActivity {
         String participants = cursor1.getString(0);
         String block = cursor1.getString(1);
 
-        int totalMatch = Integer.parseInt(participants) - 1;
-        int firstRound = Integer.parseInt(participants) / 2;
+        Map<Integer, Integer> nextMatchMapping = generateNextMatchMappings(Integer.parseInt(participants));
+        int nextMatch = getNextMatchNumber(Integer.parseInt(match_Id),nextMatchMapping);
+        System.out.println(nextMatch);
 
-        int nextMatch_Id = 0;
-        System.out.println(nextMatch_Id);
         db.close();
 
     }
 
-    /*
-    private static void generateNextMatchMappings(int totalMatch,int firstRound) {
-        int matchCounter = FIRST_ROUND_MATCHES + 1;
+
+    private static Map<Integer, Integer> generateNextMatchMappings(int numPlayers) {
+        Map<Integer, Integer> nextMatchMapping = new HashMap<>();
+        nextMatchMapping.clear();
+        int totalMatches = numPlayers - 1;
+        int firstRoundMatches = numPlayers / 2;
+
+        int matchCounter = firstRoundMatches + 1;
 
         // 1回戦の次の試合番号を設定
-        for (int i = 1; i <= FIRST_ROUND_MATCHES; i += 2) {
+        for (int i = 1; i <= firstRoundMatches; i += 2) {
             nextMatchMapping.put(i, matchCounter);
             nextMatchMapping.put(i + 1, matchCounter);
             matchCounter++;
         }
 
-        // 2回戦以降の次の試合番号を設定
-        int matchesInRound = FIRST_ROUND_MATCHES / 2;
-        while (matchCounter < TOTAL_MATCHES) {
+        // 残りのラウンドの次の試合番号を設定
+        int matchesInRound = firstRoundMatches / 2;
+        while (matchCounter <= totalMatches) {
             for (int i = 0; i < matchesInRound; i += 2) {
                 nextMatchMapping.put(matchCounter - matchesInRound * 2 + i, matchCounter);
                 nextMatchMapping.put(matchCounter - matchesInRound * 2 + i + 1, matchCounter);
@@ -265,15 +269,15 @@ public class ExportActivity extends AppCompatActivity {
             }
             matchesInRound /= 2;
         }
+
+        return nextMatchMapping;
+
     }
 
-    private static int getNextMatchNumber(int finishedMatch) {
+    private static int getNextMatchNumber(int finishedMatch,Map<Integer, Integer> nextMatchMapping) {
         return nextMatchMapping.getOrDefault(finishedMatch, -1);
     }
 
-
-
-     */
 
 
     public void showDialog(View view) {

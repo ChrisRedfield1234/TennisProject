@@ -21,6 +21,7 @@ public class ManagementActivity extends AppCompatActivity {
         Button t_edit = findViewById(R.id.tournament_edit);
         Button t_view = findViewById(R.id.tournament_view);
         Button t_entry = findViewById(R.id.tournament_entry);
+        Button returnbtn = findViewById(R.id.returnbtn);
 
         entry.setOnClickListener((View v) -> {
             startActivity(new Intent(this, PlayerEntryActivity.class));
@@ -40,6 +41,10 @@ public class ManagementActivity extends AppCompatActivity {
 
         t_entry.setOnClickListener((View v) -> {
             startActivity(new Intent(this, TournamentEntry.class));
+        });
+
+        returnbtn.setOnClickListener((View v) -> {
+            startActivity(new Intent(this, LoginActivity.class));
         });
 
     }
