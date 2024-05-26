@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     MATCH_DTO m_dto = new MATCH_DTO();
     ArrayList<PLAYER_DTO> playerList = new ArrayList<PLAYER_DTO>();
     public static String match_Id;
+    public static String tournament_Id;
     public static String player_Id1;
     public static String player_Id2;
     public static String player_Last_Name1;
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = helper.getWritableDatabase();
         player_Id1 = m_dto.getOpponents1();
         player_Id2 = m_dto.getOpponents2();
+        tournament_Id = m_dto.getTournament_Id();
         String sql = "SELECT PLAYER_LAST_NAME,PLAYER_FIRST_NAME FROM PLAYER_TBL WHERE PLAYER_ID IN (?,?);";
 
         Cursor cursor = db.rawQuery(sql, new String[]{player_Id1,player_Id2});

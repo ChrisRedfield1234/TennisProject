@@ -6,6 +6,7 @@ import static com.example.tennisproject.MainActivity.player_Id1;
 import static com.example.tennisproject.MainActivity.player_Id2;
 import static com.example.tennisproject.MainActivity.player_Last_Name1;
 import static com.example.tennisproject.MainActivity.player_Last_Name2;
+import static com.example.tennisproject.MainActivity.tournament_Id;
 import static com.example.tennisproject.Umpire_Main.umpire_Id;
 
 import android.content.Intent;
@@ -211,11 +212,11 @@ public class ExportActivity extends AppCompatActivity {
         db.execSQL(sql,new String[]{player_Id,match_Id});
 
         db.close();
-        addMatch(match_Id);
+        addMatch(match_Id,player_Id);
 
     }
 
-    public void addMatch(String match_Id){
+    public void addMatch(String match_Id,String player_Id){
 
         helper = new DatabaseHelper(this);
         try {
@@ -232,12 +233,42 @@ public class ExportActivity extends AppCompatActivity {
         Cursor cursor1 = db.rawQuery(sql1, null);
 
         cursor1.moveToNext();
-        String participants = cursor1.getString(0);
+        int participants = Integer.parseInt(cursor1.getString(0));
         String block = cursor1.getString(1);
 
-        Map<Integer, Integer> nextMatchMapping = generateNextMatchMappings(Integer.parseInt(participants));
+        Map<Integer, Integer> nextMatchMapping = generateNextMatchMappings(participants);
         int nextMatch = getNextMatchNumber(Integer.parseInt(match_Id),nextMatchMapping);
-        System.out.println(nextMatch);
+
+        String sql2 = "SELECT COUNT(*) FROM MATCH_TBL WHERE MATCH_ID = ?";
+
+        Cursor cursor2 = db.rawQuery(sql2, new String[]{String.valueOf(nextMatch)});
+
+        if(block.equals("1") && nextMatch == participants - 1 || block.equals("2") && nextMatch >= participants -2 || block.equals("4") && nextMatch >= participants -3){
+            tournament_Id = "E";
+        }
+
+        cursor2.moveToNext();
+        if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 1){
+
+            String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,?,0,0,0,1,0,null,null);";
+            db.execSQL(sql3,new String[]{String.valueOf(nextMatch),tournament_Id,player_Id});
+
+        }else if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 1){
+
+            String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,0,?,0,0,1,0,null,null);";
+            db.execSQL(sql3,new String[]{String.valueOf(nextMatch),tournament_Id,player_Id});
+
+        }else if(cursor2.getString(0).equals("1") && Integer.parseInt(match_Id) % 2 == 1){
+
+            String sql3 = "UPDATE MATCH_TBL SET OPPONENTS1_ID = ? WHERE MATCH_ID = ?;";
+            db.execSQL(sql3,new String[]{player_Id,String.valueOf(nextMatch)});
+
+        }else if(cursor2.getString(0).equals("1") && Integer.parseInt(match_Id) % 2 == 0){
+
+            String sql3 = "UPDATE MATCH_TBL SET OPPONENTS2_ID = ? WHERE MATCH_ID = ?;";
+            db.execSQL(sql3,new String[]{player_Id,String.valueOf(nextMatch)});
+
+        }
 
         db.close();
 
