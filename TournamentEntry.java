@@ -131,7 +131,7 @@ public class TournamentEntry extends AppCompatActivity {
 
         next.setOnClickListener((View v) -> {
             Intent intent = new Intent(this, TournamentEntry.class);
-            intent.putExtra("TOURNAMENT_DATA", jumpTournament(finalT_block,false));
+            intent.putExtra("TOURNAMENT_DATA", jumpTournament(finalT_block));
             startActivity(intent);
         });
 
@@ -312,37 +312,36 @@ public class TournamentEntry extends AppCompatActivity {
 
         }
 
+    public String jumpTournament(String block){
 
-    public String jumpTournament(String block,boolean flag){
+        if(block.equals("A") && int_block >= 2){
 
-            if(block.equals("A") && int_block >= 2){
+            block = "B";
 
-                block = "B";
+        }else if(block.equals("B") && int_block == 2){
 
-            }else if(block.equals("B") && int_block == 2){
+            block = "A";
 
-                block = "A";
+        }else if(block.equals("B") && int_block >= 3) {
 
-            }else if(block.equals("B") && int_block >= 3) {
+            block = "C";
 
-                block = "C";
+        }else if(block.equals("C") && int_block == 3){
 
-            }else if(block.equals("C") && int_block == 3){
+            block = "A";
 
-                block = "A";
+        }else if(block.equals("C") && int_block >= 4){
 
-            }else if(block.equals("C") && int_block >= 4){
+            block = "D";
 
-                block = "D";
+        }else if(block.equals("D")){
 
-            }else if(block.equals("D")){
+            block = "A";
 
-                block = "A";
-
-            }
-
-            return block;
         }
 
-
+        return block;
     }
+
+
+}

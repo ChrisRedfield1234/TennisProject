@@ -239,6 +239,16 @@ public class ExportActivity extends AppCompatActivity {
         Map<Integer, Integer> nextMatchMapping = generateNextMatchMappings(participants);
         int nextMatch = getNextMatchNumber(Integer.parseInt(match_Id),nextMatchMapping);
 
+        String next = "";
+
+        if(nextMatch < 10){
+            next = "00" + nextMatch;
+        }else if(nextMatch >= 10){
+            next = "0" + nextMatch;
+        }else{
+            next = String.valueOf(nextMatch);
+        }
+
         String sql2 = "SELECT COUNT(*) FROM MATCH_TBL WHERE MATCH_ID = ?";
 
         Cursor cursor2 = db.rawQuery(sql2, new String[]{String.valueOf(nextMatch)});
@@ -251,22 +261,22 @@ public class ExportActivity extends AppCompatActivity {
         if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 1){
 
             String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,?,0,0,0,1,0,null,null);";
-            db.execSQL(sql3,new String[]{String.valueOf(nextMatch),tournament_Id,player_Id});
+            db.execSQL(sql3,new String[]{next,tournament_Id,player_Id});
 
         }else if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 1){
 
             String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,0,?,0,0,1,0,null,null);";
-            db.execSQL(sql3,new String[]{String.valueOf(nextMatch),tournament_Id,player_Id});
+            db.execSQL(sql3,new String[]{next,tournament_Id,player_Id});
 
         }else if(cursor2.getString(0).equals("1") && Integer.parseInt(match_Id) % 2 == 1){
 
             String sql3 = "UPDATE MATCH_TBL SET OPPONENTS1_ID = ? WHERE MATCH_ID = ?;";
-            db.execSQL(sql3,new String[]{player_Id,String.valueOf(nextMatch)});
+            db.execSQL(sql3,new String[]{player_Id,next});
 
         }else if(cursor2.getString(0).equals("1") && Integer.parseInt(match_Id) % 2 == 0){
 
             String sql3 = "UPDATE MATCH_TBL SET OPPONENTS2_ID = ? WHERE MATCH_ID = ?;";
-            db.execSQL(sql3,new String[]{player_Id,String.valueOf(nextMatch)});
+            db.execSQL(sql3,new String[]{player_Id,next});
 
         }
 

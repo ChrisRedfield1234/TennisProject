@@ -16,7 +16,7 @@
         tools:targetApi="30">
         <activity
 
-            android:name=".LoginActivity"
+            android:name=".ManagementActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +33,7 @@
         <activity android:name=".ExportActivity"/>
         <activity android:name=".PlayerEntryActivity"/>
         <activity android:name=".Server_DTO"/>
-        <activity android:name=".ManagementActivity"/>
+        <activity android:name=".LoginActivity"/>
         <activity android:name=".PlayerManagement"/>
         <activity android:name=".PlayerEditActivity"/>
         <activity android:name=".MainActivity"/>
