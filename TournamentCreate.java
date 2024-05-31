@@ -58,10 +58,9 @@ public class TournamentCreate extends AppCompatActivity {
         if(Objects.nonNull(participants) && int_block != 0){
             //MyView myView = new MyView(this);
             //setContentView(myView);
+            returnbtn.bringToFront();
+            next.bringToFront();
         }
-
-        returnbtn.bringToFront();
-        next.bringToFront();
 
         returnbtn.setOnClickListener((View v) -> {
             startActivity(new Intent(this, ManagementActivity.class));
