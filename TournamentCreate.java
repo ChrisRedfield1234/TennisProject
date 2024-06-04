@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,11 +39,14 @@ public class TournamentCreate extends AppCompatActivity {
         setContentView(R.layout.tournament_create);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        FrameLayout canvasContainer = findViewById(R.id.canvas_container);
+        MyView myView = new MyView(this);
+        canvasContainer.addView(myView);
+
         Button returnbtn = findViewById(R.id.returnbtn);
         Button next = findViewById(R.id.next);
 
         selectTournamentInfo();
-        //現在のblockの値を受け取る処理 intent
 
         //ブロックのデータ受け取り用
         Intent tournament = getIntent();
@@ -58,8 +62,8 @@ public class TournamentCreate extends AppCompatActivity {
         if(Objects.nonNull(participants) && int_block != 0){
             //MyView myView = new MyView(this);
             //setContentView(myView);
-            returnbtn.bringToFront();
-            next.bringToFront();
+            //returnbtn.bringToFront();
+            //next.bringToFront();
         }
 
         returnbtn.setOnClickListener((View v) -> {
@@ -74,14 +78,14 @@ public class TournamentCreate extends AppCompatActivity {
         });
 
         /*
-
         if(Objects.nonNull(participants) && Objects.nonNull(block)){
             MyView myView = new MyView(this);
             setContentView(myView);
         }
-
          */
+
     }
+
 
     public void selectPlayer(){
 
@@ -157,7 +161,6 @@ public class TournamentCreate extends AppCompatActivity {
     }
 
 
-
     class MyView extends View {
         Paint paint;
         Path path;
@@ -182,7 +185,7 @@ public class TournamentCreate extends AppCompatActivity {
             int width = getWidth();
             int height = getHeight();
             //height = 1600がデフォルト
-            height = 1300;
+            height = 1150;
 
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);
@@ -194,18 +197,17 @@ public class TournamentCreate extends AppCompatActivity {
             //縦線のy終わり値
             int stop_y = 500;
 
-            //参加人数
-            double par = Double.parseDouble(participants);
-            par = 8;
-
             int divisor = 4;
 
+            int par = Integer.parseInt(participants);
+
+
             //座標保存リスト
-            int[][] intList = new int[(int) par][2];
+            int[][] intList = new int[par][2];
 
             // トーナメントの幅を計算（ここでは画面の幅を基準にします）
             //int stepWidth = (width - 2 * margin) / 7;
-            int stepWidth = (int) ((width - 2 * margin) / (par - 1));
+            int stepWidth = (int) ((width - 2 * margin) / (par /int_block) - 1);
 
             int j = 0;
 
@@ -215,7 +217,7 @@ public class TournamentCreate extends AppCompatActivity {
             paint.setColor(Color.BLACK);
 
             // 1ラウンド目の線を描画
-            for (int i = 0; i < par / 2; i++) {
+            for (int i = 0; i < (par / 2) / int_block; i++) {
                 int x1 = margin + stepWidth * j;
                 int x2 = margin + stepWidth * (j + 1);
 
@@ -235,8 +237,13 @@ public class TournamentCreate extends AppCompatActivity {
                 canvas.drawLine((x1 + x2) / 2, height - margin - 150, (x1 + x2) / 2, height - margin - 300, paint);
 
                 // Textの表示
-                canvas.drawText(matchList.get(0).getP_dto1().getLastName(), x1 -30, height, paint);
-                canvas.drawText(matchList.get(0).getP_dto2().getLastName(), x2 -30, height, paint);
+                if(!matchList.get(0).getP_dto1().getLastName().isEmpty()){
+                    canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
+                }
+                
+                if(!matchList.get(0).getP_dto2().getLastName().isEmpty()){
+                    canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
+                }
 
                 intList[i][0] = (x1 + x2) / 2;
                 intList[i][1] = height - margin - 300;
@@ -248,9 +255,10 @@ public class TournamentCreate extends AppCompatActivity {
             int vertical = 500;
 
             while (par / divisor >= 1) {
+
                 j = 0;
 
-                for (int i = 0; i < par / divisor; i++) {
+                for (int i = 0; i < (par / divisor) / int_block; i++) {
 
                     int x1 = intList[j][0];
                     int x2 = intList[j + 1][0];

@@ -167,12 +167,14 @@ public class ExportActivity extends AppCompatActivity {
                 setScore1.setText("0");
                 setScore2.setText("1");
                 updateV(match_Id,player_Id2);
+                updateLoser(player_Id1);
 
             }else{
 
                 setScore1.setText("1");
                 setScore2.setText("0");
                 updateV(match_Id,player_Id1);
+                updateLoser(player_Id2);
 
             }
 
@@ -183,12 +185,14 @@ public class ExportActivity extends AppCompatActivity {
                 setScore1.setText("1");
                 setScore2.setText("0");
                 updateV(match_Id,player_Id1);
+                updateLoser(player_Id2);
 
             }else{
 
                 setScore1.setText("0");
                 setScore2.setText("1");
                 updateV(match_Id,player_Id2);
+                updateLoser(player_Id1);
 
             }
 
@@ -251,11 +255,13 @@ public class ExportActivity extends AppCompatActivity {
 
         String sql2 = "SELECT COUNT(*) FROM MATCH_TBL WHERE MATCH_ID = ?";
 
-        Cursor cursor2 = db.rawQuery(sql2, new String[]{String.valueOf(nextMatch)});
+        Cursor cursor2 = db.rawQuery(sql2, new String[]{next});
 
         if(block.equals("1") && nextMatch == participants - 1 || block.equals("2") && nextMatch >= participants -2 || block.equals("4") && nextMatch >= participants -3){
             tournament_Id = "E";
         }
+
+        System.out.println("nextMatch：" + next);
 
         cursor2.moveToNext();
         if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 1){
@@ -279,6 +285,26 @@ public class ExportActivity extends AppCompatActivity {
             db.execSQL(sql3,new String[]{player_Id,next});
 
         }
+
+        db.close();
+
+    }
+
+    public void updateLoser(String player_Id){
+
+        helper = new DatabaseHelper(this);
+        try {
+            helper.createDatabase();
+        } catch (
+                IOException e) {
+            throw new Error("Unable to create database");
+        }
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        String sql = "UPDATE PLAYER_TBL SET LOSER_FLAG = '1' WHERE PLAYER_ID = ?";
+
+        db.execSQL(sql,new String[]{player_Id});
 
         db.close();
 

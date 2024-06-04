@@ -72,7 +72,6 @@ public class TournamentEntryList extends AppCompatActivity {
             }
         });
 
-
     }
 
     public List<Map<String, String>> selectPlayer(){
@@ -88,9 +87,11 @@ public class TournamentEntryList extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL " +
-                "INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID " +
-                "WHERE PLAYER_ID <> (SELECT OPPONENTS1_ID FROM MATCH_TBL) AND PLAYER_ID <> (SELECT OPPONENTS2_ID FROM MATCH_TBL);\n";
+        String sql = "SELECT PLAYER_ID, PLAYER_LAST_NAME, PLAYER_FIRST_NAME, GROUP_NAME\n" +
+                "FROM PLAYER_TBL\n" +
+                "INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID\n" +
+                "WHERE PLAYER_ID NOT IN (SELECT OPPONENTS1_ID FROM MATCH_TBL)\n" +
+                "AND PLAYER_ID NOT IN (SELECT OPPONENTS2_ID FROM MATCH_TBL);";
 
         Cursor cursor = db.rawQuery(sql, null);
 

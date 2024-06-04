@@ -135,9 +135,8 @@ public class TournamentEntry extends AppCompatActivity {
             startActivity(intent);
         });
 
-            ListView listView = findViewById(R.id.tournament_list);
-
-            listView.setAdapter(androidVersionListAdapter);
+        ListView listView = findViewById(R.id.tournament_list);
+        listView.setAdapter(androidVersionListAdapter);
 
         //遷移先のアクティビティーを指定
         Intent list = new Intent(this, TournamentEntryList.class);

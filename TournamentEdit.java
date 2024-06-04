@@ -121,7 +121,7 @@ public class TournamentEdit extends AppCompatActivity {
             String player_Id;
 
             for(int i = 1;i <= Integer.parseInt(par);i++){
-                String sql5 = "INSERT INTO PLAYER_TBL VALUES(?,0,0,0);";
+                String sql5 = "INSERT INTO PLAYER_TBL VALUES(?,0,0,0,0);";
 
                 if(i < 10){
                     player_Id = "00" + String.valueOf(i);
