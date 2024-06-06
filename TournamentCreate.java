@@ -59,13 +59,6 @@ public class TournamentCreate extends AppCompatActivity {
 
         selectPlayer();
 
-        if(Objects.nonNull(participants) && int_block != 0){
-            //MyView myView = new MyView(this);
-            //setContentView(myView);
-            //returnbtn.bringToFront();
-            //next.bringToFront();
-        }
-
         returnbtn.setOnClickListener((View v) -> {
             startActivity(new Intent(this, ManagementActivity.class));
         });
@@ -76,13 +69,6 @@ public class TournamentCreate extends AppCompatActivity {
             System.out.println(block);
             startActivity(intent);
         });
-
-        /*
-        if(Objects.nonNull(participants) && Objects.nonNull(block)){
-            MyView myView = new MyView(this);
-            setContentView(myView);
-        }
-         */
 
     }
 
@@ -120,11 +106,9 @@ public class TournamentCreate extends AppCompatActivity {
             matchList.add(dto);
         }
 
-        System.out.println("件数：" + matchList.size());
-
         for(MatchList_DTO dto:matchList){
 
-            String sql2 = "SELECT PLAYER_LAST_NAME,PLAYER_FIRST_NAME FROM PLAYER_TBL WHERE PLAYER_ID =?;";
+            String sql2 = "SELECT PLAYER_LAST_NAME,PLAYER_FIRST_NAME,LOSER_FLAG FROM PLAYER_TBL WHERE PLAYER_ID =?;";
 
             Cursor cursor2 = db.rawQuery(sql2, new String[]{dto.getM_dto().getOpponents1()});
 
@@ -132,8 +116,10 @@ public class TournamentCreate extends AppCompatActivity {
             PLAYER_DTO p_dto1 = new PLAYER_DTO();
 
             if(cursor2.getCount() != 0){
+                //取得した選手名と敗者フラグをdtoに格納
                 p_dto1.setLastName(cursor2.getString(0));
                 p_dto1.setFirstName(cursor2.getString(1));
+                p_dto1.setLoser_Flag(cursor2.getString(2));
             }else{
                 p_dto1.setLastName("");
                 p_dto1.setFirstName("");
@@ -147,8 +133,10 @@ public class TournamentCreate extends AppCompatActivity {
             PLAYER_DTO p_dto2 = new PLAYER_DTO();
 
             if(cursor3.getCount() != 0){
+                //取得した選手名と敗者フラグをdtoに格納
                 p_dto2.setLastName(cursor3.getString(0));
                 p_dto2.setFirstName(cursor3.getString(1));
+                p_dto2.setLoser_Flag(cursor3.getString(2));
             }else{
                 p_dto2.setLastName("");
                 p_dto2.setFirstName("");
@@ -157,6 +145,8 @@ public class TournamentCreate extends AppCompatActivity {
             dto.setP_dto2(p_dto2);
 
         }
+
+        db.close();
 
     }
 
@@ -201,19 +191,20 @@ public class TournamentCreate extends AppCompatActivity {
 
             int par = Integer.parseInt(participants);
 
-
             //座標保存リスト
             int[][] intList = new int[par][2];
 
             // トーナメントの幅を計算（ここでは画面の幅を基準にします）
             //int stepWidth = (width - 2 * margin) / 7;
-            int stepWidth = (int) ((width - 2 * margin) / (par /int_block) - 1);
+            int stepWidth =((width - 2 * margin) / (par /int_block) - 1);
 
             int j = 0;
 
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            paint.setTextAlign(Paint.Align.CENTER);
             paint.setStrokeWidth(5);
             paint.setTextSize(50);
+            //文字のカラー変更は以下で可能、敗者フラグが1の場合赤色にする処理を加える
             paint.setColor(Color.BLACK);
 
             // 1ラウンド目の線を描画
@@ -236,20 +227,27 @@ public class TournamentCreate extends AppCompatActivity {
                 //次の試合の縦線
                 canvas.drawLine((x1 + x2) / 2, height - margin - 150, (x1 + x2) / 2, height - margin - 300, paint);
 
-                // Textの表示
-                if(!matchList.get(0).getP_dto1().getLastName().isEmpty()){
-                    canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
-                }
+                // 選手名の表示処理、ここでフラグが立っているか判定して色を変える処理加える
+                // 以下のif文内にもう一つifを加えて、フラグが1の場合setColorするなど
+                // 対戦相手１（フラグはmatchList.get(i).getP_dto1().getLoser_Flag()）
                 
-                if(!matchList.get(0).getP_dto2().getLastName().isEmpty()){
-                    canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
+                if(matchList.size() != 0){
+                    if(!matchList.get(i).getP_dto1().getLastName().isEmpty()){
+
+                        canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
+                    }
+
+                    // 対戦相手２（フラグはmatchList.get(i).getP_dto2().getLoser_Flag()）
+                    if(!matchList.get(i).getP_dto2().getLastName().isEmpty()){
+                        canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
+                    }
                 }
+
 
                 intList[i][0] = (x1 + x2) / 2;
                 intList[i][1] = height - margin - 300;
 
                 j += 2;
-
             }
 
             int vertical = 500;
@@ -308,6 +306,8 @@ public class TournamentCreate extends AppCompatActivity {
         cursor.moveToNext();
         participants = cursor.getString(0);
         int_block = Integer.parseInt(cursor.getString(1));
+
+        db.close();
 
     }
 

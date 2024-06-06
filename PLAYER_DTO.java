@@ -6,6 +6,7 @@ public class PLAYER_DTO {
     private String group_Id;
     private String lastName;
     private String firstName;
+    private String loser_Flag;
 
     public String getPlayer_Id() {
         return player_Id;
@@ -38,4 +39,13 @@ public class PLAYER_DTO {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
+    public String getLoser_Flag() {
+        return loser_Flag;
+    }
+
+    public void setLoser_Flag(String loser_Flag) {
+        this.loser_Flag = loser_Flag;
+    }
+
 }

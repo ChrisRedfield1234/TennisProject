@@ -1,5 +1,8 @@
 package com.example.tennisproject;
 
+import static com.example.tennisproject.TournamentEdit.block;
+import static com.example.tennisproject.TournamentEdit.participants;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -11,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,9 +30,8 @@ public class TournamentEntry extends AppCompatActivity {
     private DatabaseHelper helper;
     private ArrayList<MatchList_DTO> matchList = new ArrayList<MatchList_DTO>();
 
-    private int int_block;
+    private int int_block = Integer.parseInt(block);
 
-    private String participants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,6 @@ public class TournamentEntry extends AppCompatActivity {
         AtomicBoolean edit_Flag1 = new AtomicBoolean(false);
         AtomicBoolean edit_Flag2 = new AtomicBoolean(false);
         AtomicBoolean assign_Flag = new AtomicBoolean(false);
-
-        selectTournamentInfo();
 
         String t_block= "";
 
@@ -148,14 +149,23 @@ public class TournamentEntry extends AppCompatActivity {
                     Map<String, String> itemMap = (Map<String, String>) listView.getItemAtPosition(position);
                     String match_Id = "";
                     String player[] = {};
-                    if(edit_Flag1.get()){
+
+                    if(Integer.parseInt(itemMap.get("試合番号")) > Integer.parseInt(participants) / 2){
+
+                        onPostExecute("その試合は編集できません");
+
+                    } else if(edit_Flag1.get()){
+
                         player = new String[]{itemMap.get("試合番号"), "1",participants};
                         list.putExtra("EXTRA_DATA",player);
                         startActivity(list);
+
                     }else if(edit_Flag2.get()){
+
                         player = new String[]{itemMap.get("試合番号"), "2",participants};
                         list.putExtra("EXTRA_DATA",player);
                         startActivity(list);
+
                     }else if(assign_Flag.get()){
 
                         if(!itemMap.get("選手ID１").equals("0") || !itemMap.get("選手ID２").equals("0")){
@@ -288,28 +298,6 @@ public class TournamentEntry extends AppCompatActivity {
 
         }
 
-        public void selectTournamentInfo(){
-
-            helper = new DatabaseHelper(this);
-
-            try {
-                helper.createDatabase();
-            } catch (
-                    IOException e) {
-                throw new Error("Unable to create database");
-            }
-
-            SQLiteDatabase db = helper.getReadableDatabase();
-
-            String sql = "SELECT * FROM TOURNAMENT_INFO_TBL;";
-
-            Cursor cursor = db.rawQuery(sql, null);
-
-            cursor.moveToNext();
-            participants = cursor.getString(1);
-            int_block = Integer.parseInt(cursor.getString(2));
-
-        }
 
     public String jumpTournament(String block){
 
@@ -342,5 +330,9 @@ public class TournamentEntry extends AppCompatActivity {
         return block;
     }
 
+    protected void onPostExecute(Object obj) {
+        //画面にメッセージを表示する
+        Toast.makeText(TournamentEntry.this,(String)obj,Toast.LENGTH_LONG).show();
+    }
 
 }

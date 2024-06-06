@@ -18,6 +18,10 @@ import java.io.IOException;
 public class TournamentEdit extends AppCompatActivity {
     private DatabaseHelper helper;
 
+    public static String participants = "32";
+
+    public static String block = "4";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +56,13 @@ public class TournamentEdit extends AppCompatActivity {
     }
 
     public void saveinfo(){
-        TextView participants = findViewById(R.id.participants);
+        TextView par = findViewById(R.id.participants);
         Spinner spinner = findViewById(R.id.block);
 
-        String par = String.valueOf(participants.getText());
-        String block = String.valueOf(spinner.getSelectedItem());
+        participants = String.valueOf(par.getText());
+        block = String.valueOf(spinner.getSelectedItem());
 
-        if(par.isEmpty() || block.isEmpty()){
+        if(participants.isEmpty() || block.isEmpty()){
             onPostExecute("入力情報が不足しています");
         }else{
             helper = new DatabaseHelper(this);
@@ -74,7 +78,7 @@ public class TournamentEdit extends AppCompatActivity {
 
             String sql1 = "UPDATE TOURNAMENT_INFO_TBL SET PARTICIPANTS = ?,BLOCK = ? WHERE TOURNAMENT_INFO_ID = '1'";
 
-            db.execSQL(sql1, new String[]{par,block});
+            db.execSQL(sql1, new String[]{participants,block});
 
             String sql2 = "DELETE FROM MATCH_TBL;";
 
@@ -84,9 +88,9 @@ public class TournamentEdit extends AppCompatActivity {
             String p = "";
             String b = "";
 
-            for(int i = 1;i <= Integer.parseInt(par)/2;i++){
+            for(int i = 1;i <= Integer.parseInt(participants)/2;i++){
 
-                if(i > ((Integer.parseInt(par) / 2) / Integer.parseInt(block)) * j){
+                if(i > ((Integer.parseInt(participants) / 2) / Integer.parseInt(block)) * j){
                     j++;
                 }
 
@@ -120,7 +124,7 @@ public class TournamentEdit extends AppCompatActivity {
 
             String player_Id;
 
-            for(int i = 1;i <= Integer.parseInt(par);i++){
+            for(int i = 1;i <= Integer.parseInt(participants);i++){
                 String sql5 = "INSERT INTO PLAYER_TBL VALUES(?,0,0,0,0);";
 
                 if(i < 10){
@@ -135,8 +139,10 @@ public class TournamentEdit extends AppCompatActivity {
 
             }
 
-
             onPostExecute("トーナメント情報の保存が完了しました");
+
+            db.close();
+
         }
 
     }
