@@ -8,6 +8,8 @@ public class PLAYER_DTO {
     private String firstName;
     private String loser_Flag;
 
+    private String abtention_Flag;
+
     public String getPlayer_Id() {
         return player_Id;
     }
@@ -46,6 +48,14 @@ public class PLAYER_DTO {
 
     public void setLoser_Flag(String loser_Flag) {
         this.loser_Flag = loser_Flag;
+    }
+
+    public String getAbtention_Flag() {
+        return abtention_Flag;
+    }
+
+    public void setAbtention_Flag(String abtention_Flag) {
+        this.abtention_Flag = abtention_Flag;
     }
 
 }

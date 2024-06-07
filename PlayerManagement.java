@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PlayerManagement extends AppCompatActivity {
     private DatabaseHelper helper;
     private ArrayList<PlayerList_DTO> playerList = new ArrayList<PlayerList_DTO>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +105,6 @@ public class PlayerManagement extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     public void showDialog(View view) {
@@ -127,7 +126,7 @@ public class PlayerManagement extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID;";
+        String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID WHERE ABTENTION_FLAG = '0';";
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -142,6 +141,7 @@ public class PlayerManagement extends AppCompatActivity {
             playerList.add(dto2);
         }
 
+        db.close();
         return getPlayer(cursor.getCount());
 
     }
@@ -181,4 +181,18 @@ public class PlayerManagement extends AppCompatActivity {
         return list;
 
     }
+
+    public void updateAbtention(){
+
+        helper = new DatabaseHelper(this);
+
+        try {
+            helper.createDatabase();
+        } catch (
+                IOException e) {
+            throw new Error("Unable to create database");
+        }
+
+    }
+
 }

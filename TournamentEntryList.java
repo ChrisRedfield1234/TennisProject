@@ -91,7 +91,8 @@ public class TournamentEntryList extends AppCompatActivity {
                 "FROM PLAYER_TBL\n" +
                 "INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID\n" +
                 "WHERE PLAYER_ID NOT IN (SELECT OPPONENTS1_ID FROM MATCH_TBL)\n" +
-                "AND PLAYER_ID NOT IN (SELECT OPPONENTS2_ID FROM MATCH_TBL);";
+                "AND PLAYER_ID NOT IN (SELECT OPPONENTS2_ID FROM MATCH_TBL) " +
+                "AND ABTENTION_FLAG = '0'";
 
         Cursor cursor = db.rawQuery(sql, null);
 
