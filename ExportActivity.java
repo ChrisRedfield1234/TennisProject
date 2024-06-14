@@ -215,7 +215,6 @@ public class ExportActivity extends AppCompatActivity {
 
         db.execSQL(sql,new String[]{player_Id,match_Id});
 
-        db.close();
         addMatch(match_Id,player_Id);
 
     }
@@ -286,7 +285,7 @@ public class ExportActivity extends AppCompatActivity {
 
         }
 
-        db.close();
+        //db.close();
 
     }
 

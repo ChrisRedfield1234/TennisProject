@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PlayerManagement extends AppCompatActivity {
     private DatabaseHelper helper;
     private ArrayList<PlayerList_DTO> playerList = new ArrayList<PlayerList_DTO>();
+    private String player_Id;
+    private String tournament_Id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +77,6 @@ public class PlayerManagement extends AppCompatActivity {
 
             }
 
-
         });
 
         SimpleAdapter androidVersionListAdapter = new SimpleAdapter(
@@ -97,19 +98,33 @@ public class PlayerManagement extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, String> itemMap = (Map<String, String>) listView.getItemAtPosition(position);
                 if(edit_Flag.get()){
-                    String player_Id = itemMap.get("プレイヤーID");
+                    player_Id = itemMap.get("プレイヤーID");
                     intent2.putExtra("EXTRA_DATA",player_Id);
                     startActivity(intent2);
+                }else if(delete_Flag.get()){
+                    player_Id = itemMap.get("プレイヤーID");
+                    showDialog(view);
+
                 }
-                //showDialog(view);
+
             }
         });
 
     }
 
     public void showDialog(View view) {
-        DialogFragment dialogFragment = new PlayerDelete_Dialog();
+        DialogFragment dialogFragment = new EntryDialogFragment();
         dialogFragment.show(getSupportFragmentManager(), "my_dialog");
+
+    }
+
+    public void onReturnValue(String value) {
+
+        if(value.equals("true")){
+            String list[] = updateAbtention(player_Id);
+            addMatch(list[0],list[1]);
+
+        }
 
     }
 
@@ -182,7 +197,9 @@ public class PlayerManagement extends AppCompatActivity {
 
     }
 
-    public void updateAbtention(){
+    public String[] updateAbtention(String player_Id){
+
+        String re_str[] = new String[2];
 
         helper = new DatabaseHelper(this);
 
@@ -193,6 +210,164 @@ public class PlayerManagement extends AppCompatActivity {
             throw new Error("Unable to create database");
         }
 
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        String sql1 = "UPDATE PLAYER_TBL SET ABTENTION_FLAG = '1' WHERE PLAYER_ID = ?;";
+
+        db.execSQL(sql1, new String[]{player_Id});
+
+        //String sql2 = "UPDATE MATCH_TBL SET OPPONENTS1_ID = '0' WHERE OPPONENTS1_ID = ?;";
+
+        //db.execSQL(sql2, new String[]{player_Id});
+
+        //String sql3 = "UPDATE MATCH_TBL SET OPPONENTS2_ID = '0' WHERE OPPONENTS2_ID = ?;";
+
+        //db.execSQL(sql3, new String[]{player_Id});
+
+        String sql4 = "SELECT MAX(MATCH_ID),TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL WHERE OPPONENTS1_ID = ? OR OPPONENTS2_ID = ?;";
+
+        Cursor cursor = db.rawQuery(sql4, new String[]{player_Id,player_Id});
+
+        cursor.moveToNext();
+        String match_Id = cursor.getString(0);
+        tournament_Id = cursor.getString(1);
+        String op_Id1 = cursor.getString(2);
+        String op_Id2 = cursor.getString(3);
+        System.out.println("player_Id：" + player_Id);
+        System.out.println("match_Id：" + match_Id);
+        System.out.println("op_Id1" + op_Id1);
+        System.out.println("op_Id2" + op_Id2);
+
+        String sql5 = "UPDATE MATCH_TBL SET V_OPPONENTS_ID = ? WHERE MATCH_ID = ?";
+
+        re_str[0] = match_Id;
+
+        if(op_Id1.equals(player_Id)){
+
+            db.execSQL(sql5, new String[]{op_Id2,match_Id});
+            re_str[1] = op_Id2;
+
+        }else if(op_Id2.equals(player_Id)){
+
+            db.execSQL(sql5, new String[]{op_Id1,match_Id});
+            re_str[1] = op_Id1;
+
+        }
+
+        db.close();
+        return re_str;
+
     }
+
+
+
+    public void addMatch(String match_Id,String player_Id){
+
+        helper = new DatabaseHelper(this);
+        try {
+            helper.createDatabase();
+        } catch (
+                IOException e) {
+            throw new Error("Unable to create database");
+        }
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        String sql1 = "SELECT PARTICIPANTS,BLOCK FROM TOURNAMENT_INFO_TBL;";
+
+        Cursor cursor1 = db.rawQuery(sql1, null);
+
+        cursor1.moveToNext();
+        int participants = Integer.parseInt(cursor1.getString(0));
+        String block = cursor1.getString(1);
+
+        Map<Integer, Integer> nextMatchMapping = generateNextMatchMappings(participants);
+        int nextMatch = getNextMatchNumber(Integer.parseInt(match_Id),nextMatchMapping);
+
+        String next = "";
+
+        if(nextMatch < 10){
+            next = "00" + nextMatch;
+        }else if(nextMatch >= 10){
+            next = "0" + nextMatch;
+        }else{
+            next = String.valueOf(nextMatch);
+        }
+
+        String sql2 = "SELECT COUNT(*) FROM MATCH_TBL WHERE MATCH_ID = ?";
+
+        Cursor cursor2 = db.rawQuery(sql2, new String[]{next});
+
+        if(block.equals("1") && nextMatch == participants - 1 || block.equals("2") && nextMatch >= participants -2 || block.equals("4") && nextMatch >= participants -3){
+            tournament_Id = "E";
+        }
+
+        System.out.println("tournament_Id：" + tournament_Id);
+
+        cursor2.moveToNext();
+        if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 1){
+            System.out.println("A");
+
+            String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,?,0,0,0,1,0,null,null);";
+            db.execSQL(sql3,new String[]{next,tournament_Id,player_Id});
+
+        }else if(cursor2.getString(0).equals("0") && Integer.parseInt(match_Id) % 2 == 0){
+            System.out.println("B");
+
+            String sql3 = "INSERT INTO MATCH_TBL VALUES(?,?,0,?,0,0,1,0,null,null);";
+            db.execSQL(sql3,new String[]{next,tournament_Id,player_Id});
+
+        }else if(cursor2.getString(0).equals("1") && Integer.parseInt(match_Id) % 2 == 1){
+            System.out.println("C");
+
+            String sql3 = "UPDATE MATCH_TBL SET OPPONENTS1_ID = ? WHERE MATCH_ID = ?;";
+            db.execSQL(sql3,new String[]{player_Id,next});
+
+        }else if(cursor2.getString(0).equals("1") && Integer.parseInt(match_Id) % 2 == 0){
+            System.out.println("D");
+
+            String sql3 = "UPDATE MATCH_TBL SET OPPONENTS2_ID = ? WHERE MATCH_ID = ?;";
+            db.execSQL(sql3,new String[]{player_Id,next});
+
+        }
+
+        //db.close();
+
+    }
+
+    private static Map<Integer, Integer> generateNextMatchMappings(int numPlayers) {
+        Map<Integer, Integer> nextMatchMapping = new HashMap<>();
+        nextMatchMapping.clear();
+        int totalMatches = numPlayers - 1;
+        int firstRoundMatches = numPlayers / 2;
+
+        int matchCounter = firstRoundMatches + 1;
+
+        // 1回戦の次の試合番号を設定
+        for (int i = 1; i <= firstRoundMatches; i += 2) {
+            nextMatchMapping.put(i, matchCounter);
+            nextMatchMapping.put(i + 1, matchCounter);
+            matchCounter++;
+        }
+
+        // 残りのラウンドの次の試合番号を設定
+        int matchesInRound = firstRoundMatches / 2;
+        while (matchCounter <= totalMatches) {
+            for (int i = 0; i < matchesInRound; i += 2) {
+                nextMatchMapping.put(matchCounter - matchesInRound * 2 + i, matchCounter);
+                nextMatchMapping.put(matchCounter - matchesInRound * 2 + i + 1, matchCounter);
+                matchCounter++;
+            }
+            matchesInRound /= 2;
+        }
+
+        return nextMatchMapping;
+
+    }
+
+    private static int getNextMatchNumber(int finishedMatch,Map<Integer, Integer> nextMatchMapping) {
+        return nextMatchMapping.getOrDefault(finishedMatch, -1);
+    }
+
 
 }

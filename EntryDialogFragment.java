@@ -17,20 +17,16 @@ public class EntryDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        // カスタムレイアウトの用意
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View customAlertView = inflater.inflate(R.layout.custom_entrydialog, null);
-
-        // ダイアログの作成
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(customAlertView)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // このボタンを押した時の処理を書きます。
-                    }
-                });
-        return builder.create();
+        return new AlertDialog.Builder(requireActivity())
+                .setTitle("確認")
+                .setMessage("プレイヤーを棄権にしますか")
+                .setPositiveButton("棄権する", (dialog, id) -> {
+                    // このボタンを押した時の処理を書きます。
+                    PlayerManagement callingActivity = (PlayerManagement) getActivity();
+                    callingActivity.onReturnValue("true");
+                })
+                .setNegativeButton("キャンセル", null)
+                .create();
     }
-
 
 }

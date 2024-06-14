@@ -66,21 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
-        Button dialogbtn = findViewById(R.id.dialog);
-        dialogbtn.setOnClickListener((View v) -> {
-
-            showDialog(v);
-
-        });
-
     }
 
-    public void showDialog(View view) {
-        DialogFragment dialogFragment = new EntryDialogFragment();
-        dialogFragment.show(getSupportFragmentManager(), "my_dialog");
 
-    }
 
     public void selectMatch(String match_Id){
         try {

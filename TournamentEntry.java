@@ -168,7 +168,7 @@ public class TournamentEntry extends AppCompatActivity {
 
                     }else if(assign_Flag.get()){
 
-                        if(!itemMap.get("選手ID１").equals("0") || !itemMap.get("選手ID２").equals("0")){
+                        if(!itemMap.get("選手ID１").equals("0") && !itemMap.get("選手ID２").equals("0")){
 
                             match_Id = itemMap.get("試合番号");
                             assing.putExtra("EXTRA_DATA",match_Id);
@@ -247,6 +247,7 @@ public class TournamentEntry extends AppCompatActivity {
 
             }
 
+            db.close();
             return getMatch(cursor1.getCount());
 
         }
