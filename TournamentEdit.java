@@ -45,6 +45,12 @@ public class TournamentEdit extends AppCompatActivity {
         Spinner block = (Spinner) findViewById(R.id.block);
         block.setAdapter(adapter);
 
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter2 = setSpinner2(adapter2);
+        Spinner participants =  (Spinner) findViewById(R.id.participants);
+        participants.setAdapter(adapter2);
+
     }
 
     public ArrayAdapter<String> setSpinner(ArrayAdapter<String> adapter){
@@ -55,11 +61,17 @@ public class TournamentEdit extends AppCompatActivity {
         return adapter;
     }
 
+    public ArrayAdapter<String> setSpinner2(ArrayAdapter<String> adapter){
+        adapter.add("32");
+        adapter.add("64");
+        return adapter;
+    }
+
     public void saveinfo(){
-        TextView par = findViewById(R.id.participants);
+        Spinner spinner2 = findViewById(R.id.participants);
         Spinner spinner = findViewById(R.id.block);
 
-        participants = String.valueOf(par.getText());
+        participants = String.valueOf(spinner2.getSelectedItem());
         block = String.valueOf(spinner.getSelectedItem());
 
         if(participants.isEmpty() || block.isEmpty()){
@@ -125,7 +137,7 @@ public class TournamentEdit extends AppCompatActivity {
             String player_Id;
 
             for(int i = 1;i <= Integer.parseInt(participants);i++){
-                String sql5 = "INSERT INTO PLAYER_TBL VALUES(?,0,0,0,0);";
+                String sql5 = "INSERT INTO PLAYER_TBL VALUES(?,0,0,0,0,0);";
 
                 if(i < 10){
                     player_Id = "00" + String.valueOf(i);

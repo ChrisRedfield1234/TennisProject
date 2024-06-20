@@ -150,17 +150,13 @@ public class TournamentEntry extends AppCompatActivity {
                     String match_Id = "";
                     String player[] = {};
 
-                    if(Integer.parseInt(itemMap.get("試合番号")) > Integer.parseInt(participants) / 2){
-
-                        onPostExecute("その試合は編集できません");
-
-                    } else if(edit_Flag1.get()){
+                    if(edit_Flag1.get() && Integer.parseInt(itemMap.get("試合番号")) <= Integer.parseInt(participants) / 2){
 
                         player = new String[]{itemMap.get("試合番号"), "1",participants};
                         list.putExtra("EXTRA_DATA",player);
                         startActivity(list);
 
-                    }else if(edit_Flag2.get()){
+                    }else if(edit_Flag2.get() && Integer.parseInt(itemMap.get("試合番号")) <= Integer.parseInt(participants) / 2){
 
                         player = new String[]{itemMap.get("試合番号"), "2",participants};
                         list.putExtra("EXTRA_DATA",player);

@@ -182,7 +182,8 @@ public class TournamentCreate extends AppCompatActivity {
             paint.setColor(Color.BLACK);
 
             // マージンを設定
-            int margin = 50;
+            int margin = 30;
+            //50
 
             //縦線のy終わり値
             int stop_y = 500;
@@ -205,7 +206,8 @@ public class TournamentCreate extends AppCompatActivity {
             paint.setStrokeWidth(5);
             paint.setTextSize(50);
             //文字のカラー変更は以下で可能、敗者フラグが1の場合赤色にする処理を加える
-            paint.setColor(Color.BLACK);
+
+            //paint.setColor(Color.BLACK);
 
             // 1ラウンド目の線を描画
             for (int i = 0; i < (par / 2) / int_block; i++) {
@@ -215,32 +217,60 @@ public class TournamentCreate extends AppCompatActivity {
                 //縦線1
                 canvas.drawLine(x1, height - margin, x1, height - margin - 150, paint);
 
+
                 //縦線2
                 canvas.drawLine(x2, height - margin, x2, height - margin - 150, paint);
+
 
                 //横線1
                 canvas.drawLine(x1, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
 
+
                 //横線2
                 canvas.drawLine(x2, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
 
+
                 //次の試合の縦線
                 canvas.drawLine((x1 + x2) / 2, height - margin - 150, (x1 + x2) / 2, height - margin - 300, paint);
-
+                paint.setColor(Color.BLACK);
                 // 選手名の表示処理、ここでフラグが立っているか判定して色を変える処理加える
                 // 以下のif文内にもう一つifを加えて、フラグが1の場合setColorするなど
                 // 対戦相手１（フラグはmatchList.get(i).getP_dto1().getLoser_Flag()）
                 
                 if(matchList.size() != 0){
+
+
+
                     if(!matchList.get(i).getP_dto1().getLastName().isEmpty()){
 
+                        //canvas.drawTextの前で設定しないといけない
+                        if(matchList.get(i).getP_dto1().getLoser_Flag().equals("1")){
+                            paint.setColor(Color.RED);
+                        }else{
+                            paint.setColor(Color.BLACK);
+                        }
                         canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
                     }
 
+
+
                     // 対戦相手２（フラグはmatchList.get(i).getP_dto2().getLoser_Flag()）
+
                     if(!matchList.get(i).getP_dto2().getLastName().isEmpty()){
+                        //canvas.drawTextの前で設定しないといけない
+                        //なぜか対戦相手2はif文条件がひっくり返さないとダメ、なぜ？？？
+                        if(matchList.get(i).getP_dto2().getLoser_Flag().equals("1")){
+                            paint.setColor(Color.RED);
+                        }else{
+                            paint.setColor(Color.BLACK);
+                        }
+
                         canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
+
                     }
+
+                    //ここで色をリセットしないとラインに赤色がついてしまう
+                    paint.setColor(Color.BLACK);
                 }
 
 

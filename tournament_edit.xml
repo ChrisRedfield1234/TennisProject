@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <Button
         android:id="@+id/returnbtn"
         android:layout_width="111dp"
@@ -32,7 +33,7 @@
         app:layout_constraintVertical_bias="0.904" />
 
     <TextView
-        android:id="@+id/lastname"
+        android:id="@+id/block_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ブロック数"
@@ -45,7 +46,7 @@
         app:layout_constraintVertical_bias="0.482" />
 
     <TextView
-        android:id="@+id/lastname"
+        android:id="@+id/participants_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="参加人数"
@@ -81,17 +82,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.484" />
 
-    <EditText
+    <Spinner
         android:id="@+id/participants"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
+        android:layout_width="214dp"
+        android:layout_height="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.499"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.361" />
+        app:layout_constraintVertical_bias="0.357" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
