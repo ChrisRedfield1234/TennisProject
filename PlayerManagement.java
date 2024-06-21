@@ -212,7 +212,7 @@ public class PlayerManagement extends AppCompatActivity {
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sql1 = "UPDATE PLAYER_TBL SET ABTENTION_FLAG = '1' WHERE PLAYER_ID = ?;";
+        String sql1 = "UPDATE PLAYER_TBL SET LOSER_FLAG = '1' , ABTENTION_FLAG = '1' WHERE PLAYER_ID = ?;";
 
         db.execSQL(sql1, new String[]{player_Id});
 
@@ -331,39 +331,39 @@ public class PlayerManagement extends AppCompatActivity {
 
         }
 
-        //db.close();
-
     }
 
     private static Map<Integer, Integer> generateNextMatchMappings(int numPlayers) {
         Map<Integer, Integer> nextMatchMapping = new HashMap<>();
-        nextMatchMapping.clear();
         int totalMatches = numPlayers - 1;
         int firstRoundMatches = numPlayers / 2;
-
         int matchCounter = firstRoundMatches + 1;
 
-        // 1回戦の次の試合番号を設定
+        // 1回戦のマッピング
         for (int i = 1; i <= firstRoundMatches; i += 2) {
             nextMatchMapping.put(i, matchCounter);
             nextMatchMapping.put(i + 1, matchCounter);
             matchCounter++;
         }
 
-        // 残りのラウンドの次の試合番号を設定
         int matchesInRound = firstRoundMatches / 2;
-        while (matchCounter <= totalMatches) {
+
+        // 残りのラウンドのマッピング
+        int baseIndex = firstRoundMatches + 1;
+        while (matchesInRound > 0) {
+            int startMatch = baseIndex;
             for (int i = 0; i < matchesInRound; i += 2) {
-                nextMatchMapping.put(matchCounter - matchesInRound * 2 + i, matchCounter);
-                nextMatchMapping.put(matchCounter - matchesInRound * 2 + i + 1, matchCounter);
+                nextMatchMapping.put(startMatch + i, matchCounter);
+                nextMatchMapping.put(startMatch + i + 1, matchCounter);
                 matchCounter++;
             }
+            baseIndex += matchesInRound;
             matchesInRound /= 2;
         }
 
         return nextMatchMapping;
-
     }
+
 
     private static int getNextMatchNumber(int finishedMatch,Map<Integer, Integer> nextMatchMapping) {
         return nextMatchMapping.getOrDefault(finishedMatch, -1);

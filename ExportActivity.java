@@ -585,7 +585,6 @@ public class ExportActivity extends AppCompatActivity {
                 }
                 c++;
 
-
             }
 
             path = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString();

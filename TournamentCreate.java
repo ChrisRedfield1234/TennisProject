@@ -45,8 +45,30 @@ public class TournamentCreate extends AppCompatActivity {
 
         Button returnbtn = findViewById(R.id.returnbtn);
         Button next = findViewById(R.id.next);
+        Button a = findViewById(R.id.A);
+        Button b = findViewById(R.id.B);
+        Button c = findViewById(R.id.C);
+        Button d = findViewById(R.id.D);
+        Button e = findViewById(R.id.E);
 
         selectTournamentInfo();
+
+        if(int_block < 2){
+            a.setEnabled(false);
+            b.setEnabled(false);
+            c.setEnabled(false);
+            d.setEnabled(false);
+            e.setEnabled(false);
+        } else if(int_block < 2){
+            b.setEnabled(false);
+            c.setEnabled(false);
+            d.setEnabled(false);
+        }else if(int_block < 3){
+            c.setEnabled(false);
+            d.setEnabled(false);
+        }else if(int_block < 4){
+            d.setEnabled(false);
+        }
 
         //ブロックのデータ受け取り用
         Intent tournament = getIntent();
@@ -58,6 +80,37 @@ public class TournamentCreate extends AppCompatActivity {
         }
 
         selectPlayer();
+
+        a.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, TournamentCreate.class);
+            intent.putExtra("TOURNAMENT_DATA", "A");
+            System.out.println(block);
+            startActivity(intent);
+        });
+
+        b.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, TournamentCreate.class);
+            intent.putExtra("TOURNAMENT_DATA", "B");
+            startActivity(intent);
+        });
+
+        c.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, TournamentCreate.class);
+            intent.putExtra("TOURNAMENT_DATA", "C");
+            startActivity(intent);
+        });
+
+        d.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, TournamentCreate.class);
+            intent.putExtra("TOURNAMENT_DATA", "D");
+            startActivity(intent);
+        });
+
+        e.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, TournamentCreate.class);
+            intent.putExtra("TOURNAMENT_DATA", "E");
+            startActivity(intent);
+        });
 
         returnbtn.setOnClickListener((View v) -> {
             startActivity(new Intent(this, ManagementActivity.class));
@@ -209,84 +262,184 @@ public class TournamentCreate extends AppCompatActivity {
 
             //paint.setColor(Color.BLACK);
 
-            // 1ラウンド目の線を描画
-            for (int i = 0; i < (par / 2) / int_block; i++) {
-                int x1 = margin + stepWidth * j;
-                int x2 = margin + stepWidth * (j + 1);
+            if(!block.equals("E")){
 
-                //縦線1
-                canvas.drawLine(x1, height - margin, x1, height - margin - 150, paint);
+                // 1ラウンド目の線を描画
+                for (int i = 0; i < (par / 2) / int_block; i++) {
+                    int x1 = margin + stepWidth * j;
+                    int x2 = margin + stepWidth * (j + 1);
 
+                    //縦線1
+                    canvas.drawLine(x1, height - margin, x1, height - margin - 150, paint);
 
-                //縦線2
-                canvas.drawLine(x2, height - margin, x2, height - margin - 150, paint);
+                    //縦線2
+                    canvas.drawLine(x2, height - margin, x2, height - margin - 150, paint);
 
+                    //横線1
+                    canvas.drawLine(x1, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
 
-                //横線1
-                canvas.drawLine(x1, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
+                    //横線2
+                    canvas.drawLine(x2, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
 
-
-                //横線2
-                canvas.drawLine(x2, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
-
-
-                //次の試合の縦線
-                canvas.drawLine((x1 + x2) / 2, height - margin - 150, (x1 + x2) / 2, height - margin - 300, paint);
-                paint.setColor(Color.BLACK);
-                // 選手名の表示処理、ここでフラグが立っているか判定して色を変える処理加える
-                // 以下のif文内にもう一つifを加えて、フラグが1の場合setColorするなど
-                // 対戦相手１（フラグはmatchList.get(i).getP_dto1().getLoser_Flag()）
-                
-                if(matchList.size() != 0){
-
-
-
-                    if(!matchList.get(i).getP_dto1().getLastName().isEmpty()){
-
-                        //canvas.drawTextの前で設定しないといけない
-                        if(matchList.get(i).getP_dto1().getLoser_Flag().equals("1")){
-                            paint.setColor(Color.RED);
-                        }else{
-                            paint.setColor(Color.BLACK);
-                        }
-                        canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
-                    }
-
-
-
-                    // 対戦相手２（フラグはmatchList.get(i).getP_dto2().getLoser_Flag()）
-
-                    if(!matchList.get(i).getP_dto2().getLastName().isEmpty()){
-                        //canvas.drawTextの前で設定しないといけない
-                        //なぜか対戦相手2はif文条件がひっくり返さないとダメ、なぜ？？？
-                        if(matchList.get(i).getP_dto2().getLoser_Flag().equals("1")){
-                            paint.setColor(Color.RED);
-                        }else{
-                            paint.setColor(Color.BLACK);
-                        }
-
-                        canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
-
-                    }
-
-                    //ここで色をリセットしないとラインに赤色がついてしまう
+                    //次の試合の縦線
+                    canvas.drawLine((x1 + x2) / 2, height - margin - 150, (x1 + x2) / 2, height - margin - 300, paint);
                     paint.setColor(Color.BLACK);
+                    // 選手名の表示処理、ここでフラグが立っているか判定して色を変える処理加える
+                    // 以下のif文内にもう一つifを加えて、フラグが1の場合setColorするなど
+                    // 対戦相手１（フラグはmatchList.get(i).getP_dto1().getLoser_Flag()）
+
+                    if(matchList.size() != 0){
+
+                        if(!matchList.get(i).getP_dto1().getLastName().isEmpty()){
+
+                            //canvas.drawTextの前で設定しないといけない
+                            if(matchList.get(i).getP_dto1().getLoser_Flag().equals("1")){
+                                paint.setColor(Color.RED);
+                            }else{
+                                paint.setColor(Color.BLACK);
+                            }
+                            canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
+                        }
+
+                        // 対戦相手２（フラグはmatchList.get(i).getP_dto2().getLoser_Flag()）
+
+                        if(!matchList.get(i).getP_dto2().getLastName().isEmpty()){
+                            //canvas.drawTextの前で設定しないといけない
+                            //なぜか対戦相手2はif文条件がひっくり返さないとダメ、なぜ？？？
+                            if(matchList.get(i).getP_dto2().getLoser_Flag().equals("1")){
+                                paint.setColor(Color.RED);
+                            }else{
+                                paint.setColor(Color.BLACK);
+                            }
+
+                            canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
+
+                        }
+
+                        //ここで色をリセットしないとラインに赤色がついてしまう
+                        paint.setColor(Color.BLACK);
+                    }
+
+
+                    intList[i][0] = (x1 + x2) / 2;
+                    intList[i][1] = height - margin - 300;
+
+                    j += 2;
                 }
 
+                int vertical = 500;
 
-                intList[i][0] = (x1 + x2) / 2;
-                intList[i][1] = height - margin - 300;
+                while (par / divisor >= 1) {
 
-                j += 2;
-            }
+                    j = 0;
 
-            int vertical = 500;
+                    for (int i = 0; i < (par / divisor) / int_block; i++) {
 
-            while (par / divisor >= 1) {
+                        int x1 = intList[j][0];
+                        int x2 = intList[j + 1][0];
+                        int y = intList[j][1];
 
-                j = 0;
+                        //横線1
+                        canvas.drawLine(x1, y, (x1 + x2) / 2, y, paint);
 
-                for (int i = 0; i < (par / divisor) / int_block; i++) {
+                        //横線2
+                        canvas.drawLine(x2, y, (x1 + x2) / 2, y, paint);
+
+                        //次の試合の縦線
+                        canvas.drawLine((x1 + x2) / 2, y, (x1 + x2) / 2, height - margin - vertical, paint);
+
+                        intList[i][0] = (x1 + x2) / 2;
+                        intList[i][1] = height - margin - vertical;
+
+                        j += 2;
+
+                    }
+
+                    divisor *= 2;
+                    vertical += 200;
+
+                }
+
+        }else{
+
+                int roop = 0;
+
+                if(int_block == 2){
+                    roop = 1;
+                }else if(int_block == 4){
+                    roop = 2;
+                }
+
+                for (int i = 0; i < roop; i++) {
+                    System.out.println("a");
+                    int x1 = margin + stepWidth * j;
+                    int x2 = margin + stepWidth * (j + 1);
+
+                    //縦線1
+                    canvas.drawLine(x1, height - margin, x1, height - margin - 150, paint);
+
+                    //縦線2
+                    canvas.drawLine(x2, height - margin, x2, height - margin - 150, paint);
+
+                    //横線1
+                    canvas.drawLine(x1, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
+
+                    //横線2
+                    canvas.drawLine(x2, height - margin - 150, (x1 + x2) / 2, height - margin - 150, paint);
+
+                    //次の試合の縦線
+                    canvas.drawLine((x1 + x2) / 2, height - margin - 150, (x1 + x2) / 2, height - margin - 300, paint);
+                    paint.setColor(Color.BLACK);
+                    // 選手名の表示処理、ここでフラグが立っているか判定して色を変える処理加える
+                    // 以下のif文内にもう一つifを加えて、フラグが1の場合setColorするなど
+                    // 対戦相手１（フラグはmatchList.get(i).getP_dto1().getLoser_Flag()）
+/*
+                    if(matchList.size() != 0){
+
+                        if(!matchList.get(i).getP_dto1().getLastName().isEmpty()){
+
+                            //canvas.drawTextの前で設定しないといけない
+                            if(matchList.get(i).getP_dto1().getLoser_Flag().equals("1")){
+                                paint.setColor(Color.RED);
+                            }else{
+                                paint.setColor(Color.BLACK);
+                            }
+                            canvas.drawText(matchList.get(i).getP_dto1().getLastName(), x1, height, paint);
+                        }
+
+                        // 対戦相手２（フラグはmatchList.get(i).getP_dto2().getLoser_Flag()）
+
+                        if(!matchList.get(i).getP_dto2().getLastName().isEmpty()){
+                            //canvas.drawTextの前で設定しないといけない
+                            //なぜか対戦相手2はif文条件がひっくり返さないとダメ、なぜ？？？
+                            if(matchList.get(i).getP_dto2().getLoser_Flag().equals("1")){
+                                paint.setColor(Color.RED);
+                            }else{
+                                paint.setColor(Color.BLACK);
+                            }
+
+                            canvas.drawText(matchList.get(i).getP_dto2().getLastName(), x2, height, paint);
+
+                        }
+
+                        //ここで色をリセットしないとラインに赤色がついてしまう
+                        paint.setColor(Color.BLACK);
+                    }
+
+
+ */
+
+                    intList[i][0] = (x1 + x2) / 2;
+                    intList[i][1] = height - margin - 300;
+
+                    j += 2;
+                }
+
+                if(int_block == 4){
+
+                    j = 0;
+
+                    int vertical = 500;
 
                     int x1 = intList[j][0];
                     int x2 = intList[j + 1][0];
@@ -301,17 +454,42 @@ public class TournamentCreate extends AppCompatActivity {
                     //次の試合の縦線
                     canvas.drawLine((x1 + x2) / 2, y, (x1 + x2) / 2, height - margin - vertical, paint);
 
-                    intList[i][0] = (x1 + x2) / 2;
-                    intList[i][1] = height - margin - vertical;
-
-                    j += 2;
-
                 }
+                
 
-                divisor *= 2;
-                vertical += 200;
+/*
+            for (int i = 0; i < (par / divisor) / int_block; i++) {
+
+                int x1 = intList[j][0];
+                int x2 = intList[j + 1][0];
+                int y = intList[j][1];
+
+                //横線1
+                canvas.drawLine(x1, y, (x1 + x2) / 2, y, paint);
+
+                //横線2
+                canvas.drawLine(x2, y, (x1 + x2) / 2, y, paint);
+
+                //次の試合の縦線
+                canvas.drawLine((x1 + x2) / 2, y, (x1 + x2) / 2, height - margin - vertical, paint);
+
+                intList[i][0] = (x1 + x2) / 2;
+                intList[i][1] = height - margin - vertical;
+
+                j += 2;
 
             }
+
+            divisor *= 2;
+            vertical += 200;
+
+
+ */
+
+
+            }
+
+
         }
 
     }
