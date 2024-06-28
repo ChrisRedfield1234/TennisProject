@@ -320,7 +320,6 @@ public class TournamentCreate extends AppCompatActivity {
                         paint.setColor(Color.BLACK);
                     }
 
-
                     intList[i][0] = (x1 + x2) / 2;
                     intList[i][1] = height - margin - 300;
 
@@ -393,8 +392,8 @@ public class TournamentCreate extends AppCompatActivity {
                     // 選手名の表示処理、ここでフラグが立っているか判定して色を変える処理加える
                     // 以下のif文内にもう一つifを加えて、フラグが1の場合setColorするなど
                     // 対戦相手１（フラグはmatchList.get(i).getP_dto1().getLoser_Flag()）
-/*
-                    if(matchList.size() != 0){
+
+                    if(matchList.size() > i){
 
                         if(!matchList.get(i).getP_dto1().getLastName().isEmpty()){
 
@@ -427,7 +426,6 @@ public class TournamentCreate extends AppCompatActivity {
                     }
 
 
- */
 
                     intList[i][0] = (x1 + x2) / 2;
                     intList[i][1] = height - margin - 300;

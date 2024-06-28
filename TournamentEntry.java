@@ -192,7 +192,7 @@ public class TournamentEntry extends AppCompatActivity {
             SQLiteDatabase db = helper.getReadableDatabase();
 
             //String sql = "SELECT PLAYER_ID,PLAYER_LAST_NAME,PLAYER_FIRST_NAME,GROUP_NAME FROM PLAYER_TBL INNER JOIN GROUP_TBL ON PLAYER_TBL.GROUP_ID = GROUP_TBL.GROUP_ID;";
-            String sql1 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL WHERE TOURNAMENT_ID = ?";
+            String sql1 = "SELECT MATCH_ID,TOURNAMENT_ID,OPPONENTS1_ID,OPPONENTS2_ID FROM MATCH_TBL WHERE TOURNAMENT_ID = ? AND V_OPPONENTS_ID = '0'";
 
             Cursor cursor1 = db.rawQuery(sql1, new String[]{t_block});
 
