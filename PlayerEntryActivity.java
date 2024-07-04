@@ -46,7 +46,7 @@ public class PlayerEntryActivity extends AppCompatActivity {
     }
 
     public void entryPlayer(){
-        EditText lastname = findViewById(R.id.edit_);
+        EditText lastname = findViewById(R.id.edit_lastname);
         EditText firstname = findViewById(R.id.edit_firstname);
         Spinner spinner = findViewById(R.id.block);
 

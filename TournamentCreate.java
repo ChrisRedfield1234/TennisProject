@@ -229,6 +229,7 @@ public class TournamentCreate extends AppCompatActivity {
             int height = getHeight();
             //height = 1600がデフォルト
             height = 1150;
+            width = 2700;
 
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);
